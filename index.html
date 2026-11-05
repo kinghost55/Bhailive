@@ -1,39 +1,191 @@
+
 <!DOCTYPE html>
-<html lang="ur">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bhailive - Live Cricket</title>
+    <title>Bhailive - Dynamic Live Cricket & Betting</title>
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; }
-        body { background-color: #0d1117; color: #ffffff; display: flex; justify-content: center; }
-        .container { width: 100%; max-width: 480px; background-color: #161b22; min-height: 100vh; padding: 20px; }
-        .title { color: #00e676; font-size: 24px; text-align: center; margin-bottom: 20px; font-weight: bold; }
-        .card { background-color: #21262d; padding: 15px; border-radius: 8px; margin-bottom: 15px; border: 1px solid #30363d; }
-        .badge { background-color: #da3633; color: white; font-size: 10px; padding: 3px 6px; border-radius: 4px; font-weight: bold; display: inline-block; margin-bottom: 8px; }
-        .teams { font-size: 16px; font-weight: bold; margin-bottom: 5px; }
-        .score { color: #00e676; font-size: 14px; margin-bottom: 10px; }
-        .odds { display: flex; gap: 10px; }
-        .btn { flex: 1; padding: 8px; text-align: center; border-radius: 5px; font-weight: bold; font-size: 13px; }
-        .pak { background-color: #1f6beb; color: white; }
-        .aus { background-color: #d73a49; color: white; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: #0b0e14; color: #e6edf3; display: flex; justify-content: center; }
+        .app-container { width: 100%; max-width: 480px; background-color: #161b22; min-height: 100vh; padding: 15px; border-left: 1px solid #30363d; border-right: 1px solid #30363d; }
+        
+        /* LOGIN SCREEN */
+        #login-screen { padding: 50px 10px; text-align: center; }
+        .brand-title { color: #00e676; font-size: 32px; font-weight: bold; letter-spacing: 1px; margin-bottom: 5px; }
+        .subtitle { color: #8b949e; font-size: 13px; margin-bottom: 30px; }
+        .form-group { margin-bottom: 18px; text-align: left; }
+        .form-group label { display: block; color: #8b949e; font-size: 12px; margin-bottom: 6px; font-weight: 600; }
+        .form-group input { width: 100%; padding: 12px; background-color: #0d1117; border: 1px solid #30363d; border-radius: 6px; color: white; font-size: 15px; outline: none; }
+        .form-group input:focus { border-color: #00e676; }
+        .btn-login { width: 100%; padding: 13px; background-color: #00e676; color: #000; font-weight: bold; font-size: 16px; border: none; border-radius: 6px; cursor: pointer; margin-top: 10px; }
+        
+        /* DASHBOARD */
+        #dashboard { display: none; }
+        .top-bar { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #00e676; padding-bottom: 10px; margin-bottom: 15px; }
+        .top-bar h2 { color: #00e676; font-size: 20px; font-weight: bold; }
+        .user-info { background-color: #21262d; padding: 5px 10px; border-radius: 20px; font-size: 12px; color: #00e676; border: 1px solid #30363d; }
+        
+        .section-title { font-size: 14px; font-weight: bold; color: #8b949e; margin: 15px 0 10px 0; text-transform: uppercase; letter-spacing: 0.5px; }
+        .card { background-color: #21262d; border-radius: 8px; border: 1px solid #30363d; padding: 12px; margin-bottom: 15px; }
+        
+        .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+        .live-tag { background-color: #da3633; color: white; font-size: 10px; font-weight: bold; padding: 2px 6px; border-radius: 4px; animation: blink 1s infinite alternate; }
+        @keyframes blink { from { opacity: 1; } to { opacity: 0.4; } }
+        .league-name { color: #8b949e; font-size: 11px; }
+
+        .teams-title { font-size: 16px; font-weight: bold; margin-bottom: 4px; color: #ffffff; }
+        .score-line { color: #00e676; font-size: 13px; font-weight: 600; margin-bottom: 12px; }
+
+        /* ODDS TABLE */
+        .odds-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; text-align: center; font-size: 12px; margin-bottom: 10px; }
+        .odds-header { color: #8b949e; font-weight: 600; padding-bottom: 4px; }
+        .odds-btn { padding: 8px 4px; border-radius: 4px; font-weight: bold; cursor: pointer; transition: background 0.2s; }
+        .back-btn { background-color: #1f6beb; color: white; }
+        .lay-btn { background-color: #d73a49; color: white; }
+        .team-label { display: flex; align-items: center; font-weight: bold; color: #e6edf3; font-size: 13px; }
+
+        /* FANCY MARKET */
+        .fancy-card { background-color: #161b22; border: 1px solid #30363d; border-radius: 6px; padding: 10px; margin-top: 8px; }
+        .fancy-title { font-size: 13px; font-weight: bold; color: #ffab00; margin-bottom: 8px; }
+        .fancy-grid { display: flex; justify-content: space-between; align-items: center; background-color: #21262d; padding: 8px; border-radius: 4px; }
+        .fancy-box { text-align: center; padding: 6px 12px; border-radius: 4px; min-width: 70px; }
+        .fancy-no { background-color: #d73a49; color: white; font-weight: bold; }
+        .fancy-yes { background-color: #1f6beb; color: white; font-weight: bold; }
+        .fancy-val { font-size: 14px; }
+        .fancy-rate { font-size: 10px; opacity: 0.8; }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <div class="title">Bhailive Cricket</div>
+<div class="app-container">
 
-    <div class="card">
-        <span class="badge">IN-PLAY</span>
-        <div class="teams">Pakistan vs Australia</div>
-        <div class="score">PAK: 210/3 (14.3 Overs)</div>
-        <div class="odds">
-            <div class="btn pak">PAK: 1.85</div>
-            <div class="btn aus">AUS: 2.10</div>
-        </div>
+    <!-- LOGIN SCREEN -->
+    <div id="login-screen">
+        <div class="brand-title">Bhailive</div>
+        <div class="subtitle">Secure Live Cricket & Exchange Platform</div>
+        
+        <form onsubmit="doLogin(event)">
+            <div class="form-group">
+                <label>User ID</label>
+                <input type="text" id="userid" placeholder="Enter User ID" required>
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" placeholder="Enter Password" required>
+            </div>
+            <button type="submit" class="btn-login">Log In</button>
+        </form>
     </div>
+
+    <!-- MAIN DASHBOARD -->
+    <div id="dashboard">
+        <div class="top-bar">
+            <h2>Bhailive Live</h2>
+            <div class="user-info" id="user-tag">User: Demo</div>
+        </div>
+
+        <div class="section-title">In-Play Matches</div>
+
+        <!-- MATCH CARD 1 -->
+        <div class="card">
+            <div class="card-header">
+                <span class="live-tag">LIVE</span>
+                <span class="league-name">ICC T20 World Cup</span>
+            </div>
+            <div class="teams-title">Pakistan vs Australia</div>
+            <div class="score-line" id="score-pak">PAK: 154/3 (14.2 Overs)</div>
+
+            <div class="odds-grid">
+                <div class="odds-header">Team</div>
+                <div class="odds-header">Back</div>
+                <div class="odds-header">Lay</div>
+
+                <div class="team-label">PAK</div>
+                <div class="odds-btn back-btn" id="pak-back">1.85</div>
+                <div class="odds-btn lay-btn" id="pak-lay">1.87</div>
+
+                <div class="team-label">AUS</div>
+                <div class="odds-btn back-btn" id="aus-back">2.10</div>
+                <div class="odds-btn lay-btn" id="aus-lay">2.14</div>
+            </div>
+
+            <!-- FANCY SESSION -->
+            <div class="fancy-card">
+                <div class="fancy-title">Session: 15 Over Runs PAK</div>
+                <div class="fancy-grid">
+                    <span style="font-size:12px; font-weight:bold;">15 Over Runs</span>
+                    <div style="display:flex; gap:8px;">
+                        <div class="fancy-box fancy-no">
+                            <div class="fancy-val" id="fancy-no-val">162</div>
+                            <div class="fancy-rate">NO (100)</div>
+                        </div>
+                        <div class="fancy-box fancy-yes">
+                            <div class="fancy-val" id="fancy-yes-val">164</div>
+                            <div class="fancy-rate">YES (100)</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- MATCH CARD 2 -->
+        <div class="card">
+            <div class="card-header">
+                <span class="live-tag">LIVE</span>
+                <span class="league-name">IPL 2026</span>
+            </div>
+            <div class="teams-title">India vs England</div>
+            <div class="score-line" id="score-ind">IND: 88/1 (7.4 Overs)</div>
+
+            <div class="odds-grid">
+                <div class="odds-header">Team</div>
+                <div class="odds-header">Back</div>
+                <div class="odds-header">Lay</div>
+
+                <div class="team-label">IND</div>
+                <div class="odds-btn back-btn" id="ind-back">1.45</div>
+                <div class="odds-btn lay-btn" id="ind-lay">1.47</div>
+
+                <div class="team-label">ENG</div>
+                <div class="odds-btn back-btn" id="eng-back">3.10</div>
+                <div class="odds-btn lay-btn" id="eng-lay">3.20</div>
+            </div>
+        </div>
+
+    </div>
+
 </div>
+
+<script>
+    function doLogin(e) {
+        e.preventDefault();
+        const user = document.getElementById('userid').value;
+        document.getElementById('user-tag').innerText = 'User: ' + user;
+        document.getElementById('login-screen').style.display = 'none';
+        document.getElementById('dashboard').style.display = 'block';
+    }
+
+    // AUTOMATIC RATES & RUNS CHANGER (EVERY 2 SECONDS)
+    setInterval(() => {
+        // PAK vs AUS Rates Update
+        let pakBack = (1.80 + Math.random() * 0.15).toFixed(2);
+        let pakLay = (parseFloat(pakBack) + 0.02).toFixed(2);
+        let ausBack = (2.05 + Math.random() * 0.20).toFixed(2);
+        let ausLay = (parseFloat(ausBack) + 0.04).toFixed(2);
+
+        document.getElementById('pak-back').innerText = pakBack;
+        document.getElementById('pak-lay').innerText = pakLay;
+        document.getElementById('aus-back').innerText = ausBack;
+        document.getElementById('aus-lay').innerText = ausLay;
+
+        // Fancy Session Update
+        let baseFancy = 160 + Math.floor(Math.random() * 5);
+        document.getElementById('fancy-no-val').innerText = baseFancy;
+        document.getElementById('fancy-yes-val').innerText = baseFancy + 2;
+
+    }, 2000);
+</script>
 
 </body>
 </html>
