@@ -1,43 +1,37 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bhailive - Dynamic Live Cricket & Betting</title>
+    <title>Bhailive - Live Cricket Exchange</title>
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
         body { background-color: #0b0e14; color: #e6edf3; display: flex; justify-content: center; }
         .app-container { width: 100%; max-width: 480px; background-color: #161b22; min-height: 100vh; padding: 15px; border-left: 1px solid #30363d; border-right: 1px solid #30363d; }
         
-        /* LOGIN SCREEN */
         #login-screen { padding: 50px 10px; text-align: center; }
-        .brand-title { color: #00e676; font-size: 32px; font-weight: bold; letter-spacing: 1px; margin-bottom: 5px; }
+        .brand-title { color: #00e676; font-size: 32px; font-weight: bold; margin-bottom: 5px; }
         .subtitle { color: #8b949e; font-size: 13px; margin-bottom: 30px; }
         .form-group { margin-bottom: 18px; text-align: left; }
         .form-group label { display: block; color: #8b949e; font-size: 12px; margin-bottom: 6px; font-weight: 600; }
         .form-group input { width: 100%; padding: 12px; background-color: #0d1117; border: 1px solid #30363d; border-radius: 6px; color: white; font-size: 15px; outline: none; }
-        .form-group input:focus { border-color: #00e676; }
         .btn-login { width: 100%; padding: 13px; background-color: #00e676; color: #000; font-weight: bold; font-size: 16px; border: none; border-radius: 6px; cursor: pointer; margin-top: 10px; }
-        
-        /* DASHBOARD */
+
         #dashboard { display: none; }
         .top-bar { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #00e676; padding-bottom: 10px; margin-bottom: 15px; }
-        .top-bar h2 { color: #00e676; font-size: 20px; font-weight: bold; }
-        .user-info { background-color: #21262d; padding: 5px 10px; border-radius: 20px; font-size: 12px; color: #00e676; border: 1px solid #30363d; }
+        .top-bar h2 { color: #00e676; font-size: 18px; font-weight: bold; }
         
-        .section-title { font-size: 14px; font-weight: bold; color: #8b949e; margin: 15px 0 10px 0; text-transform: uppercase; letter-spacing: 0.5px; }
+        .wallet-box { background-color: #21262d; border: 1px solid #30363d; padding: 10px; border-radius: 6px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; font-size: 13px; }
+        .balance-text { color: #00e676; font-weight: bold; font-size: 15px; }
+
         .card { background-color: #21262d; border-radius: 8px; border: 1px solid #30363d; padding: 12px; margin-bottom: 15px; }
-        
         .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
         .live-tag { background-color: #da3633; color: white; font-size: 10px; font-weight: bold; padding: 2px 6px; border-radius: 4px; animation: blink 1s infinite alternate; }
         @keyframes blink { from { opacity: 1; } to { opacity: 0.4; } }
-        .league-name { color: #8b949e; font-size: 11px; }
 
         .teams-title { font-size: 16px; font-weight: bold; margin-bottom: 4px; color: #ffffff; }
         .score-line { color: #00e676; font-size: 13px; font-weight: 600; margin-bottom: 12px; }
 
-        /* ODDS TABLE */
         .odds-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; text-align: center; font-size: 12px; margin-bottom: 10px; }
         .odds-header { color: #8b949e; font-weight: 600; padding-bottom: 4px; }
         .odds-btn { padding: 8px 4px; border-radius: 4px; font-weight: bold; cursor: pointer; transition: background 0.2s; }
@@ -46,145 +40,191 @@
         .team-label { display: flex; align-items: center; font-weight: bold; color: #e6edf3; font-size: 13px; }
 
         /* FANCY MARKET */
-        .fancy-card { background-color: #161b22; border: 1px solid #30363d; border-radius: 6px; padding: 10px; margin-top: 8px; }
+        .fancy-card { background-color: #161b22; border: 1px solid #30363d; border-radius: 6px; padding: 10px; margin-top: 10px; }
         .fancy-title { font-size: 13px; font-weight: bold; color: #ffab00; margin-bottom: 8px; }
         .fancy-grid { display: flex; justify-content: space-between; align-items: center; background-color: #21262d; padding: 8px; border-radius: 4px; }
-        .fancy-box { text-align: center; padding: 6px 12px; border-radius: 4px; min-width: 70px; }
+        .fancy-box { text-align: center; padding: 6px 12px; border-radius: 4px; min-width: 70px; cursor: pointer; }
         .fancy-no { background-color: #d73a49; color: white; font-weight: bold; }
         .fancy-yes { background-color: #1f6beb; color: white; font-weight: bold; }
-        .fancy-val { font-size: 14px; }
-        .fancy-rate { font-size: 10px; opacity: 0.8; }
+
+        .error-msg { color: #d73a49; font-size: 12px; margin-top: 8px; }
+        .btn-action { background: #30363d; color: white; border: none; padding: 5px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; }
     </style>
 </head>
 <body>
 
 <div class="app-container">
 
-    <!-- LOGIN SCREEN -->
+    <!-- USER LOGIN SCREEN -->
     <div id="login-screen">
         <div class="brand-title">Bhailive</div>
-        <div class="subtitle">Secure Live Cricket & Exchange Platform</div>
+        <div class="subtitle">Client Live Updates Portal</div>
         
-        <form onsubmit="doLogin(event)">
+        <form onsubmit="handleUserLogin(event)">
             <div class="form-group">
                 <label>User ID</label>
-                <input type="text" id="userid" placeholder="Enter User ID" required>
+                <input type="text" id="user-id" placeholder="Enter User ID" required>
             </div>
             <div class="form-group">
                 <label>Password</label>
-                <input type="password" placeholder="Enter Password" required>
+                <input type="password" id="user-pass" placeholder="Enter Password" required>
             </div>
-            <button type="submit" class="btn-login">Log In</button>
+            <button type="submit" class="btn-login">Login</button>
+            <div id="err-login" class="error-msg"></div>
         </form>
     </div>
 
-    <!-- MAIN DASHBOARD -->
+    <!-- LIVE USER DASHBOARD -->
     <div id="dashboard">
         <div class="top-bar">
             <h2>Bhailive Live</h2>
-            <div class="user-info" id="user-tag">User: Demo</div>
+            <div>
+                <span id="display-username" style="font-size: 12px; color: #8b949e; display: block; text-align: right;">User: --</span>
+                <button class="btn-action" onclick="changePassword()" style="margin-top:2px;">Change Password</button>
+            </div>
         </div>
 
-        <div class="section-title">In-Play Matches</div>
+        <!-- WALLET / BALANCE -->
+        <div class="wallet-box">
+            <div>Available Balance:</div>
+            <div class="balance-text" id="user-balance">PKR 0.00</div>
+        </div>
 
-        <!-- MATCH CARD 1 -->
         <div class="card">
             <div class="card-header">
                 <span class="live-tag">LIVE</span>
-                <span class="league-name">ICC T20 World Cup</span>
+                <span style="font-size: 11px; color: #8b949e;" id="m-league">In-Play Match</span>
             </div>
-            <div class="teams-title">Pakistan vs Australia</div>
-            <div class="score-line" id="score-pak">PAK: 154/3 (14.2 Overs)</div>
+            <div class="teams-title" id="m-title">Pakistan vs Australia</div>
+            <div class="score-line" id="m-score">PAK: 175/4 (16.1 Overs)</div>
 
+            <!-- MATCH ODDS -->
             <div class="odds-grid">
                 <div class="odds-header">Team</div>
                 <div class="odds-header">Back</div>
                 <div class="odds-header">Lay</div>
 
-                <div class="team-label">PAK</div>
-                <div class="odds-btn back-btn" id="pak-back">1.85</div>
-                <div class="odds-btn lay-btn" id="pak-lay">1.87</div>
+                <div class="team-label" id="m-t1">PAK</div>
+                <div class="odds-btn back-btn" id="m-t1-back" onclick="placeBet('PAK Back', document.getElementById('m-t1-back').innerText)">1.85</div>
+                <div class="odds-btn lay-btn" id="m-t1-lay" onclick="placeBet('PAK Lay', document.getElementById('m-t1-lay').innerText)">1.87</div>
 
-                <div class="team-label">AUS</div>
-                <div class="odds-btn back-btn" id="aus-back">2.10</div>
-                <div class="odds-btn lay-btn" id="aus-lay">2.14</div>
+                <div class="team-label" id="m-t2">AUS</div>
+                <div class="odds-btn back-btn" id="m-t2-back" onclick="placeBet('AUS Back', document.getElementById('m-t2-back').innerText)">2.10</div>
+                <div class="odds-btn lay-btn" id="m-t2-lay" onclick="placeBet('AUS Lay', document.getElementById('m-t2-lay').innerText)">2.14</div>
             </div>
 
-            <!-- FANCY SESSION -->
+            <!-- FANCY SESSION (AUTO CHANGING) -->
             <div class="fancy-card">
-                <div class="fancy-title">Session: 15 Over Runs PAK</div>
+                <div class="fancy-title" id="m-fancy-title">Session: 15 Over Runs PAK</div>
                 <div class="fancy-grid">
-                    <span style="font-size:12px; font-weight:bold;">15 Over Runs</span>
+                    <span style="font-size:12px; font-weight:bold;">Rate Market</span>
                     <div style="display:flex; gap:8px;">
-                        <div class="fancy-box fancy-no">
-                            <div class="fancy-val" id="fancy-no-val">162</div>
-                            <div class="fancy-rate">NO (100)</div>
+                        <div class="fancy-box fancy-no" onclick="placeBet('Fancy NO', document.getElementById('m-fancy-no').innerText)">
+                            <div style="font-size: 14px;" id="m-fancy-no">165</div>
+                            <div style="font-size: 9px; opacity:0.8;">NO</div>
                         </div>
-                        <div class="fancy-box fancy-yes">
-                            <div class="fancy-val" id="fancy-yes-val">164</div>
-                            <div class="fancy-rate">YES (100)</div>
+                        <div class="fancy-box fancy-yes" onclick="placeBet('Fancy YES', document.getElementById('m-fancy-yes').innerText)">
+                            <div style="font-size: 14px;" id="m-fancy-yes">167</div>
+                            <div style="font-size: 9px; opacity:0.8;">YES</div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-
-        <!-- MATCH CARD 2 -->
-        <div class="card">
-            <div class="card-header">
-                <span class="live-tag">LIVE</span>
-                <span class="league-name">IPL 2026</span>
-            </div>
-            <div class="teams-title">India vs England</div>
-            <div class="score-line" id="score-ind">IND: 88/1 (7.4 Overs)</div>
-
-            <div class="odds-grid">
-                <div class="odds-header">Team</div>
-                <div class="odds-header">Back</div>
-                <div class="odds-header">Lay</div>
-
-                <div class="team-label">IND</div>
-                <div class="odds-btn back-btn" id="ind-back">1.45</div>
-                <div class="odds-btn lay-btn" id="ind-lay">1.47</div>
-
-                <div class="team-label">ENG</div>
-                <div class="odds-btn back-btn" id="eng-back">3.10</div>
-                <div class="odds-btn lay-btn" id="eng-lay">3.20</div>
-            </div>
-        </div>
-
     </div>
 
 </div>
 
 <script>
-    function doLogin(e) {
+    let currentUser = '';
+
+    function handleUserLogin(e) {
         e.preventDefault();
-        const user = document.getElementById('userid').value;
-        document.getElementById('user-tag').innerText = 'User: ' + user;
-        document.getElementById('login-screen').style.display = 'none';
-        document.getElementById('dashboard').style.display = 'block';
+        const id = document.getElementById('user-id').value.trim();
+        const pass = document.getElementById('user-pass').value.trim();
+        
+        let users = JSON.parse(localStorage.getItem('bhailive_users') || '{}');
+
+        if (users[id] && users[id].pass === pass) {
+            currentUser = id;
+            document.getElementById('display-username').innerText = 'User: ' + id;
+            document.getElementById('user-balance').innerText = 'PKR ' + (users[id].balance || 0);
+            
+            document.getElementById('login-screen').style.display = 'none';
+            document.getElementById('dashboard').style.display = 'block';
+            startAutoFluctuation(); // Start auto changing rates
+        } else {
+            document.getElementById('err-login').innerText = 'Invalid User ID or Password!';
+        }
     }
 
-    // AUTOMATIC RATES & RUNS CHANGER (EVERY 2 SECONDS)
-    setInterval(() => {
-        // PAK vs AUS Rates Update
-        let pakBack = (1.80 + Math.random() * 0.15).toFixed(2);
-        let pakLay = (parseFloat(pakBack) + 0.02).toFixed(2);
-        let ausBack = (2.05 + Math.random() * 0.20).toFixed(2);
-        let ausLay = (parseFloat(ausBack) + 0.04).toFixed(2);
+    function changePassword() {
+        let newPass = prompt('Enter your new password:');
+        if (!newPass) return;
+        
+        let users = JSON.parse(localStorage.getItem('bhailive_users') || '{}');
+        if (users[currentUser]) {
+            users[currentUser].pass = newPass;
+            localStorage.setItem('bhailive_users', JSON.stringify(users));
+            alert('Password successfully changed!');
+        }
+    }
 
-        document.getElementById('pak-back').innerText = pakBack;
-        document.getElementById('pak-lay').innerText = pakLay;
-        document.getElementById('aus-back').innerText = ausBack;
-        document.getElementById('aus-lay').innerText = ausLay;
+    function placeBet(market, rate) {
+        let amount = prompt('Enter bet amount (PKR):', '1000');
+        if (!amount || isNaN(amount)) return;
 
-        // Fancy Session Update
-        let baseFancy = 160 + Math.floor(Math.random() * 5);
-        document.getElementById('fancy-no-val').innerText = baseFancy;
-        document.getElementById('fancy-yes-val').innerText = baseFancy + 2;
+        let users = JSON.parse(localStorage.getItem('bhailive_users') || '{}');
+        let bal = users[currentUser].balance || 0;
 
-    }, 2000);
+        if (Number(amount) > bal) {
+            alert('Insufficient balance! Admin se balance deposit karwayein.');
+            return;
+        }
+
+        // Deduct balance and save bet
+        users[currentUser].balance = bal - Number(amount);
+        localStorage.setItem('bhailive_users', JSON.stringify(users));
+        document.getElementById('user-balance').innerText = 'PKR ' + users[currentUser].balance;
+
+        let bets = JSON.parse(localStorage.getItem('bhailive_all_bets') || '[]');
+        bets.push({
+            user: currentUser,
+            market: market,
+            rate: rate,
+            amount: amount,
+            time: new Date().toLocaleTimeString()
+        });
+        localStorage.setItem('bhailive_all_bets', JSON.stringify(bets));
+
+        alert('Bet placed successfully on ' + market + ' at rate ' + rate);
+    }
+
+    // AUTO-CHANGING RATES & FANCY ENGINE (EVERY 2 SECONDS)
+    function startAutoFluctuation() {
+        setInterval(() => {
+            // Randomly fluctuate match odds slightly
+            let t1b = (1.75 + Math.random() * 0.20).toFixed(2);
+            let t1l = (parseFloat(t1b) + 0.02).toFixed(2);
+            let t2b = (2.00 + Math.random() * 0.25).toFixed(2);
+            let t2l = (parseFloat(t2b) + 0.04).toFixed(2);
+
+            if(document.getElementById('m-t1-back')) {
+                document.getElementById('m-t1-back').innerText = t1b;
+                document.getElementById('m-t1-lay').innerText = t1l;
+                document.getElementById('m-t2-back').innerText = t2b;
+                document.getElementById('m-t2-lay').innerText = t2l;
+
+                // Auto update fancy numbers dynamically
+                let currentNo = parseInt(document.getElementById('m-fancy-no').innerText);
+                let randomShift = Math.random() > 0.5 ? 1 : -1;
+                let newNo = currentNo + (Math.random() > 0.7 ? randomShift : 0);
+                
+                document.getElementById('m-fancy-no').innerText = newNo;
+                document.getElementById('m-fancy-yes').innerText = newNo + 2;
+            }
+        }, 2500);
+    }
 </script>
 
 </body>
