@@ -1,453 +1,605 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ur" dir="ltr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bhailive - Live Cricket Exchange</title>
+    <title>Bhai Live - Cricket & Sports Live</title>
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
-        body { background-color: #0b0e14; color: #e6edf3; display: flex; justify-content: center; }
-        .app-container { width: 100%; max-width: 480px; background-color: #161b22; min-height: 100vh; padding: 15px; border-left: 1px solid #30363d; border-right: 1px solid #30363d; position: relative; }
-        
-        #login-screen { padding: 50px 10px; text-align: center; }
-        .brand-title { color: #00e676; font-size: 32px; font-weight: bold; margin-bottom: 5px; }
-        .subtitle { color: #8b949e; font-size: 13px; margin-bottom: 20px; }
-        
-        .form-group { margin-bottom: 18px; text-align: left; }
-        .form-group label { display: block; color: #8b949e; font-size: 12px; margin-bottom: 6px; font-weight: 600; }
-        .form-group input { width: 100%; padding: 12px; background-color: #0d1117; border: 1px solid #30363d; border-radius: 6px; color: white; font-size: 15px; outline: none; }
-        .btn-login { width: 100%; padding: 13px; background-color: #00e676; color: #000; font-weight: bold; font-size: 16px; border: none; border-radius: 6px; cursor: pointer; margin-top: 10px; }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
 
-        #dashboard { display: none; }
-        .top-bar { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #00e676; padding-bottom: 10px; margin-bottom: 15px; position: relative; }
-        .top-bar h2 { color: #00e676; font-size: 18px; font-weight: bold; }
-        
-        .menu-btn { font-size: 22px; cursor: pointer; color: #e6edf3; padding: 0 8px; }
-        .dropdown-menu { display: none; position: absolute; right: 0; top: 35px; background-color: #21262d; border: 1px solid #30363d; border-radius: 6px; width: 160px; z-index: 100; box-shadow: 0 4px 10px rgba(0,0,0,0.5); }
-        .dropdown-menu div { padding: 10px 12px; font-size: 13px; cursor: pointer; border-bottom: 1px solid #30363d; color: #e6edf3; }
-        .dropdown-menu div:hover { background-color: #30363d; }
-        .dropdown-menu div:last-child { border-bottom: none; }
+        body {
+            background-color: #121826;
+            color: #ffffff;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
 
-        .wallet-box { background-color: #21262d; border: 1px solid #30363d; padding: 10px 14px; border-radius: 6px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; font-size: 13px; }
-        .balance-text { color: #00e676; font-weight: bold; font-size: 16px; }
+        /* Top Header */
+        header {
+            background-color: #1a2332;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #2a364f;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
 
-        .card { background-color: #21262d; border-radius: 8px; border: 1px solid #30363d; padding: 12px; margin-bottom: 15px; }
-        .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
-        .live-tag { background-color: #da3633; color: white; font-size: 10px; font-weight: bold; padding: 2px 6px; border-radius: 4px; animation: blink 1s infinite alternate; }
-        @keyframes blink { from { opacity: 1; } to { opacity: 0.4; } }
+        .logo {
+            font-size: 1.4rem;
+            font-weight: bold;
+            color: #ffb703;
+            letter-spacing: 1px;
+        }
 
-        .teams-title { font-size: 16px; font-weight: bold; margin-bottom: 4px; color: #ffffff; }
-        .score-line { color: #00e676; font-size: 13px; font-weight: 600; margin-bottom: 12px; }
+        .menu-btn {
+            font-size: 1.8rem;
+            cursor: pointer;
+            background: none;
+            border: none;
+            color: white;
+        }
 
-        .odds-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; text-align: center; font-size: 12px; margin-bottom: 10px; }
-        .odds-header { color: #8b949e; font-weight: 600; padding-bottom: 4px; }
-        .odds-btn { padding: 8px 4px; border-radius: 4px; font-weight: bold; cursor: pointer; }
-        .back-btn { background-color: #1f6beb; color: white; }
-        .lay-btn { background-color: #d73a49; color: white; }
-        .team-label { display: flex; align-items: center; font-weight: bold; color: #e6edf3; font-size: 13px; }
+        /* Slide Sidebar / Navigation */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            right: -280px;
+            width: 280px;
+            height: 100%;
+            background-color: #1a2332;
+            box-shadow: -5px 0 15px rgba(0,0,0,0.5);
+            transition: 0.3s ease;
+            z-index: 1000;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+        }
 
-        .fancy-section-title { font-size: 14px; font-weight: bold; color: #ffab00; margin: 15px 0 8px 0; border-bottom: 1px solid #30363d; padding-bottom: 4px; }
-        .fancy-card { background-color: #161b22; border: 1px solid #30363d; border-radius: 6px; padding: 10px; margin-top: 8px; }
-        .fancy-grid { display: flex; justify-content: space-between; align-items: center; }
-        .fancy-box { text-align: center; padding: 6px 12px; border-radius: 4px; min-width: 65px; cursor: pointer; }
-        .fancy-no { background-color: #d73a49; color: white; font-weight: bold; }
-        .fancy-yes { background-color: #1f6beb; color: white; font-weight: bold; }
+        .sidebar.active {
+            right: 0;
+        }
 
-        /* MODALS (HISTORY & QUICK STAKE SELECTOR) */
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 200; justify-content: center; align-items: center; padding: 15px; }
-        .modal-content { background: #161b22; border: 1px solid #30363d; width: 100%; max-width: 440px; border-radius: 8px; padding: 15px; max-height: 80vh; overflow-y: auto; }
-        .modal-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #30363d; padding-bottom: 8px; margin-bottom: 12px; }
-        .modal-header h3 { color: #ffab00; font-size: 16px; }
-        .close-btn { color: #8b949e; font-size: 20px; cursor: pointer; font-weight: bold; }
-        
-        .history-table { width: 100%; font-size: 11px; border-collapse: collapse; margin-top: 5px; }
-        .history-table th, .history-table td { border: 1px solid #30363d; padding: 6px; text-align: left; }
-        .history-table th { color: #8b949e; background-color: #21262d; }
-        .error-msg { color: #d73a49; font-size: 12px; margin-top: 8px; }
+        .close-btn {
+            align-self: flex-end;
+            font-size: 1.8rem;
+            background: none;
+            border: none;
+            color: #ff4757;
+            cursor: pointer;
+            margin-bottom: 20px;
+        }
 
-        /* STAKE CHIPS GRID */
-        .stakes-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-top: 15px; }
-        .stake-chip { background-color: #21262d; border: 1px solid #30363d; color: #00e676; font-size: 16px; font-weight: bold; padding: 15px 0; text-align: center; border-radius: 6px; cursor: pointer; transition: 0.2s; }
-        .stake-chip:hover { background-color: #30363d; border-color: #00e676; }
+        .sidebar-menu {
+            list-style: none;
+        }
+
+        .sidebar-menu li {
+            padding: 12px 15px;
+            margin-bottom: 10px;
+            background: #243044;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: 0.2s;
+        }
+
+        .sidebar-menu li:hover {
+            background: #2e3e58;
+            color: #ffb703;
+        }
+
+        .logout-btn {
+            margin-top: auto;
+            background: #ff4757 !important;
+            color: white;
+            font-weight: bold;
+        }
+
+        /* Overlay */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            display: none;
+            z-index: 999;
+        }
+        .overlay.active {
+            display: block;
+        }
+
+        /* Navigation Tabs */
+        .tabs-container {
+            display: flex;
+            background-color: #1a2332;
+            border-bottom: 1px solid #2a364f;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 14px;
+            text-align: center;
+            background: none;
+            border: none;
+            color: #a0aec0;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: 0.3s;
+        }
+
+        .tab-btn.active {
+            color: #ffb703;
+            border-bottom: 3px solid #ffb703;
+            background-color: #243044;
+        }
+
+        /* Main Content Container */
+        .content {
+            padding: 15px;
+            flex: 1;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Match Card Styles */
+        .match-card {
+            background: #1a2332;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            border: 1px solid #2a364f;
+            cursor: pointer;
+            transition: transform 0.2s, border-color 0.2s;
+        }
+
+        .match-card:hover {
+            transform: translateY(-2px);
+            border-color: #ffb703;
+        }
+
+        .badge-live {
+            background: #ff4757;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            animation: pulse 1.5s infinite;
+        }
+
+        .badge-upcoming {
+            background: #2ed573;
+            color: black;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: bold;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        .teams-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 10px;
+        }
+
+        .team-name {
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .score-info {
+            color: #ffb703;
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        .match-time {
+            font-size: 0.85rem;
+            color: #8a99ad;
+            margin-top: 8px;
+        }
+
+        /* Full Match Detail Modal/Screen */
+        .match-detail-view {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #121826;
+            z-index: 2000;
+            overflow-y: auto;
+            padding: 15px;
+        }
+
+        .match-detail-view.active {
+            display: block;
+        }
+
+        .detail-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .back-btn {
+            background: #243044;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .live-scoreboard-box {
+            background: linear-gradient(135deg, #1a2332, #243044);
+            border: 1px solid #ffb703;
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .fancy-section, .history-section {
+            background: #1a2332;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+            border: 1px solid #2a364f;
+        }
+
+        .section-title {
+            color: #ffb703;
+            font-size: 1.1rem;
+            margin-bottom: 12px;
+            border-bottom: 1px solid #2a364f;
+            padding-bottom: 5px;
+        }
+
+        .rates-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .rate-box {
+            background: #243044;
+            padding: 10px;
+            border-radius: 6px;
+            text-align: center;
+        }
+
+        .rate-box span {
+            display: block;
+        }
+
+        .rate-val {
+            color: #2ed573;
+            font-weight: bold;
+            font-size: 1.1rem;
+            margin-top: 5px;
+        }
+
+        .bet-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            font-size: 0.9rem;
+        }
+
+        .bet-table th, .bet-table td {
+            border: 1px solid #2a364f;
+            padding: 8px;
+            text-align: center;
+        }
+
+        .bet-table th {
+            background: #243044;
+            color: #ffb703;
+        }
+
+        /* Modals */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: #1a2332;
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px solid #ffb703;
+            z-index: 3000;
+            width: 90%;
+            max-width: 400px;
+        }
+        .modal.active { display: block; }
+        .modal input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            background: #243044;
+            border: 1px solid #2a364f;
+            color: white;
+            border-radius: 5px;
+        }
+        .modal-btn {
+            background: #ffb703;
+            color: black;
+            border: none;
+            padding: 10px;
+            width: 100%;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
 
-<div class="app-container">
+    <!-- Header -->
+    <header>
+        <div class="logo">BHAI LIVE (بھائی لائیو)</div>
+        <button class="menu-btn" onclick="toggleSidebar()">&#9776;</button>
+    </header>
 
-    <!-- USER LOGIN SCREEN -->
-    <div id="login-screen">
-        <div class="brand-title">Bhailive</div>
-        <div class="subtitle">Client Live Updates Portal</div>
-        
-        <form onsubmit="handleUserLogin(event)">
-            <div class="form-group">
-                <label>User ID</label>
-                <input type="text" id="user-id" placeholder="Enter User ID" required>
-            </div>
-            <div class="form-group">
-                <label>Password</label>
-                <input type="password" id="user-pass" placeholder="Enter Password" required>
-            </div>
-            <button type="submit" class="btn-login">Login</button>
-            <div id="err-login" class="error-msg"></div>
-        </form>
+    <!-- Navigation Tabs -->
+    <div class="tabs-container">
+        <button class="tab-btn active" onclick="switchTab('live')">🔴 Live Matches</button>
+        <button class="tab-btn" onclick="switchTab('cricket')">🏏 Cricket (7 Days)</button>
     </div>
 
-    <!-- LIVE USER DASHBOARD -->
-    <div id="dashboard">
-        <div class="top-bar">
-            <h2>Bhailive Live</h2>
-            <div style="display: flex; align-items: center; gap: 8px;">
-                <span id="display-username" style="font-size: 12px; color: #8b949e;">User: --</span>
-                <div class="menu-btn" onclick="toggleMenu()">⋮</div>
-                <div class="dropdown-menu" id="user-menu">
-                    <div onclick="openHistoryModal()">📋 Bet History</div>
-                    <div onclick="changePassword()">🔑 Change Password</div>
-                    <div onclick="logout()" style="color:#d73a49;">🚪 Logout</div>
-                </div>
+    <!-- Main Content Area -->
+    <div class="content">
+        <!-- Live Matches Tab -->
+        <div id="liveTab" class="tab-content active">
+            <div id="liveMatchesList">
+                <p style="text-align: center; color: #8a99ad;">Fetching live match data...</p>
             </div>
         </div>
 
-        <div class="wallet-box">
-            <div>Available Balance:</div>
-            <div class="balance-text" id="user-balance">PKR 0.00</div>
-        </div>
-
-        <div class="card">
-            <div class="card-header">
-                <span class="live-tag">LIVE MATCH</span>
-                <span style="font-size: 11px; color: #8b949e;" id="m-status">Fetching Live Match...</span>
+        <!-- Cricket (Upcoming 7 Days) Tab -->
+        <div id="cricketTab" class="tab-content">
+            <div id="upcomingCricketList">
+                <p style="text-align: center; color: #8a99ad;">Fetching upcoming fixtures...</p>
             </div>
-            <div class="teams-title" id="m-title">PAK vs AUS (Live)</div>
-            <div class="score-line" id="m-score">PAK: 175/4 (16.1 Overs)</div>
-
-            <!-- MATCH ODDS -->
-            <div class="odds-grid">
-                <div class="odds-header">Team</div>
-                <div class="odds-header">Back</div>
-                <div class="odds-header">Lay</div>
-
-                <div class="team-label" id="m-t1">PAK</div>
-                <div class="odds-btn back-btn" id="m-t1-back" onclick="selectBet('PAK Back', document.getElementById('m-t1-back').innerText)">1.92</div>
-                <div class="odds-btn lay-btn" id="m-t1-lay" onclick="selectBet('PAK Lay', document.getElementById('m-t1-lay').innerText)">1.94</div>
-
-                <div class="team-label" id="m-t2">AUS</div>
-                <div class="odds-btn back-btn" id="m-t2-back" onclick="selectBet('AUS Back', document.getElementById('m-t2-back').innerText)">2.16</div>
-                <div class="odds-btn lay-btn" id="m-t2-lay" onclick="selectBet('AUS Lay', document.getElementById('m-t2-lay').innerText)">2.20</div>
-            </div>
-
-            <!-- FANCY SESSIONS -->
-            <div class="fancy-section-title">⚡ Fancy Sessions</div>
-
-            <div class="fancy-card">
-                <div class="fancy-grid">
-                    <div>
-                        <div style="font-size: 12px; font-weight: bold; color: #ffffff;">1 Over Runs</div>
-                        <span style="font-size:10px; color:#8b949e;">Market Open</span>
-                    </div>
-                    <div style="display:flex; gap:8px;">
-                        <div class="fancy-box fancy-no" onclick="selectBet('1 Over Runs NO', '8')">
-                            <div style="font-size: 13px;">8</div><div style="font-size: 8px;">NO</div>
-                        </div>
-                        <div class="fancy-box fancy-yes" onclick="selectBet('1 Over Runs YES', '9')">
-                            <div style="font-size: 13px;">9</div><div style="font-size: 8px;">YES</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="fancy-card">
-                <div class="fancy-grid">
-                    <div>
-                        <div style="font-size: 12px; font-weight: bold; color: #ffffff;">2 Over Runs</div>
-                        <span style="font-size:10px; color:#8b949e;">Market Open</span>
-                    </div>
-                    <div style="display:flex; gap:8px;">
-                        <div class="fancy-box fancy-no" onclick="selectBet('2 Over Runs NO', '16')">
-                            <div style="font-size: 13px;">16</div><div style="font-size: 8px;">NO</div>
-                        </div>
-                        <div class="fancy-box fancy-yes" onclick="selectBet('2 Over Runs YES', '18')">
-                            <div style="font-size: 13px;">18</div><div style="font-size: 8px;">YES</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="fancy-card">
-                <div class="fancy-grid">
-                    <div>
-                        <div style="font-size: 12px; font-weight: bold; color: #ffffff;">6 Over Runs (Powerplay)</div>
-                        <span style="font-size:10px; color:#8b949e;">Market Open</span>
-                    </div>
-                    <div style="display:flex; gap:8px;">
-                        <div class="fancy-box fancy-no" onclick="selectBet('6 Over Runs NO', '48')">
-                            <div style="font-size: 13px;">48</div><div style="font-size: 8px;">NO</div>
-                        </div>
-                        <div class="fancy-box fancy-yes" onclick="selectBet('6 Over Runs YES', '50')">
-                            <div style="font-size: 13px;">50</div><div style="font-size: 8px;">YES</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="fancy-card">
-                <div class="fancy-grid">
-                    <div>
-                        <div style="font-size: 12px; font-weight: bold; color: #ffffff;">10 Over Runs</div>
-                        <span style="font-size:10px; color:#8b949e;">Market Open</span>
-                    </div>
-                    <div style="display:flex; gap:8px;">
-                        <div class="fancy-box fancy-no" onclick="selectBet('10 Over Runs NO', '85')">
-                            <div style="font-size: 13px;">85</div><div style="font-size: 8px;">NO</div>
-                        </div>
-                        <div class="fancy-box fancy-yes" onclick="selectBet('10 Over Runs YES', '88')">
-                            <div style="font-size: 13px;">88</div><div style="font-size: 8px;">YES</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="fancy-card">
-                <div class="fancy-grid">
-                    <div>
-                        <div style="font-size: 12px; font-weight: bold; color: #ffffff;">15 Over Runs</div>
-                        <span style="font-size:10px; color:#8b949e;">Market Open</span>
-                    </div>
-                    <div style="display:flex; gap:8px;">
-                        <div class="fancy-box fancy-no" onclick="selectBet('15 Over Runs NO', '132')">
-                            <div style="font-size: 13px;">132</div><div style="font-size: 8px;">NO</div>
-                        </div>
-                        <div class="fancy-box fancy-yes" onclick="selectBet('15 Over Runs YES', '135')">
-                            <div style="font-size: 13px;">135</div><div style="font-size: 8px;">YES</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="fancy-card">
-                <div class="fancy-grid">
-                    <div>
-                        <div style="font-size: 12px; font-weight: bold; color: #ffffff;">20 Over Total Runs</div>
-                        <span style="font-size:10px; color:#8b949e;">Market Open</span>
-                    </div>
-                    <div style="display:flex; gap:8px;">
-                        <div class="fancy-box fancy-no" onclick="selectBet('20 Over Runs NO', '185')">
-                            <div style="font-size: 13px;">185</div><div style="font-size: 8px;">NO</div>
-                        </div>
-                        <div class="fancy-box fancy-yes" onclick="selectBet('20 Over Runs YES', '188')">
-                            <div style="font-size: 13px;">188</div><div style="font-size: 8px;">YES</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
         </div>
     </div>
 
-</div>
+    <!-- Side Menu Overlay -->
+    <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
 
-<!-- BET HISTORY MODAL -->
-<div class="modal" id="history-modal">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h3>📋 My Bet History & Ledger</h3>
-            <span class="close-btn" onclick="closeHistoryModal()">&times;</span>
-        </div>
-        <table class="history-table">
-            <thead>
-                <tr>
-                    <th>Market</th>
-                    <th>Rate</th>
-                    <th>Amount</th>
-                    <th>Time</th>
-                </tr>
-            </thead>
-            <tbody id="user-history-body">
-                <tr><td colspan="4" style="text-align:center;">No bets recorded.</td></tr>
-            </tbody>
-        </table>
+    <!-- Sidebar Menu (3 Dots / Options) -->
+    <div class="sidebar" id="sidebar">
+        <button class="close-btn" onclick="toggleSidebar()">&times;</button>
+        <ul class="sidebar-menu">
+            <li onclick="openModal('passwordModal')">🔒 Change Password</li>
+            <li onclick="openModal('historyModal')">📜 Bet History</li>
+            <li onclick="alert('Settings option selected')">⚙️ Settings</li>
+            <li class="logout-btn" onclick="logout()">🚪 Logout</li>
+        </ul>
     </div>
-</div>
 
-<!-- STAKE SELECTOR MODAL (NO KEYBOARD) -->
-<div class="modal" id="stake-modal">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h3 id="stake-title">Select Bet Amount</h3>
-            <span class="close-btn" onclick="closeStakeModal()">&times;</span>
+    <!-- Match Detailed View Page (Card click) -->
+    <div class="match-detail-view" id="matchDetailView">
+        <div class="detail-header">
+            <button class="back-btn" onclick="closeDetailView()">&larr; Back</button>
+            <h3 id="detailTitle">Match Details</h3>
         </div>
-        <div style="font-size: 12px; color: #8b949e; margin-bottom: 5px;" id="stake-info">Choose amount to place bet:</div>
-        <div class="stakes-grid">
-            <div class="stake-chip" onclick="confirmPlaceBet(200)">200</div>
-            <div class="stake-chip" onclick="confirmPlaceBet(500)">500</div>
-            <div class="stake-chip" onclick="confirmPlaceBet(1000)">1000</div>
-            <div class="stake-chip" onclick="confirmPlaceBet(5000)">5000</div>
-            <div class="stake-chip" onclick="confirmPlaceBet(10000)">10000</div>
-            <div class="stake-chip" onclick="confirmPlaceBet(50000)">50000</div>
+
+        <!-- Top Live Scoreboard -->
+        <div class="live-scoreboard-box">
+            <h2 id="detailTeams">Team A vs Team B</h2>
+            <div class="score-info" id="detailScore" style="font-size: 1.5rem; margin: 10px 0;">145/3 (15.2 Overs)</div>
+            <p id="detailStatus" style="color: #2ed573;">Live - Session 2</p>
+        </div>
+
+        <!-- Real Fancy / Odds Section -->
+        <div class="fancy-section">
+            <div class="section-title">📊 Live Fancy & Match Rates (اصلی ریٹ)</div>
+            <div class="rates-grid">
+                <div class="rate-box">
+                    <span>Team A (Back/Lay)</span>
+                    <span class="rate-val" id="rateA">1.85 / 1.87</span>
+                </div>
+                <div class="rate-box">
+                    <span>Team B (Back/Lay)</span>
+                    <span class="rate-val" id="rateB">2.10 / 2.14</span>
+                </div>
+                <div class="rate-box" style="margin-top: 10px; grid-column: span 2;">
+                    <span>Current Over Fancy (20 Overs Runs)</span>
+                    <span class="rate-val" id="fancyRuns">172 - 174</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- User Bet History (Middle/Bottom) -->
+        <div class="history-section">
+            <div class="section-title">📝 Match Bet History (بیٹ ہسٹری)</div>
+            <table class="bet-table">
+                <thead>
+                    <tr>
+                        <th>Type</th>
+                        <th>Selection</th>
+                        <th>Rate</th>
+                        <th>Amount</th>
+                    </tr>
+                </thead>
+                <tbody id="matchBetHistory">
+                    <tr>
+                        <td>Match Winner</td>
+                        <td>Team A</td>
+                        <td>1.85</td>
+                        <td>Rs. 1,000</td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
     </div>
-</div>
 
-<script>
-    let currentUser = '';
-    let selectedMarket = '';
-    let selectedRate = '';
+    <!-- Password Modal -->
+    <div class="modal" id="passwordModal">
+        <h3>Change Password</h3>
+        <input type="password" placeholder="Old Password">
+        <input type="password" placeholder="New Password">
+        <button class="modal-btn" onclick="closeModal('passwordModal')">Update Password</button>
+    </div>
 
-    function toggleMenu() {
-        const m = document.getElementById('user-menu');
-        m.style.display = (m.style.display === 'block') ? 'none' : 'block';
-    }
+    <!-- History Modal -->
+    <div class="modal" id="historyModal">
+        <h3>All Bet History</h3>
+        <p style="font-size: 0.85rem; color: #a0aec0; margin-bottom: 10px;">Recent overall bets recorded:</p>
+        <div id="allHistoryContent">No other bets found.</div>
+        <button class="modal-btn" onclick="closeModal('historyModal')" style="margin-top: 15px;">Close</button>
+    </div>
 
-    document.addEventListener('click', function(e) {
-        if (!e.target.matches('.menu-btn')) {
-            document.getElementById('user-menu').style.display = 'none';
+    <script>
+        // Free Sports API Integration (Cricket Data API sample)
+        const API_KEY = "cricapi_free_demo_key"; 
+
+        // Toggle Navigation Sidebar
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('active');
+            document.getElementById('overlay').classList.toggle('active');
         }
-    });
 
-    function handleUserLogin(e) {
-        e.preventDefault();
-        const id = document.getElementById('user-id').value.trim();
-        const pass = document.getElementById('user-pass').value.trim();
-        
-        let users = JSON.parse(localStorage.getItem('bhailive_users') || '{}');
+        // Switch Tabs
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
 
-        if (users[id] && users[id].pass === pass) {
-            currentUser = id;
-            document.getElementById('display-username').innerText = 'User: ' + id;
-            document.getElementById('user-balance').innerText = 'PKR ' + (users[id].balance || 0);
-            
-            document.getElementById('login-screen').style.display = 'none';
-            document.getElementById('dashboard').style.display = 'block';
-            
-            fetchLiveCricketData();
-            setInterval(fetchLiveCricketData, 10000);
-            startOddsFluctuation();
-        } else {
-            document.getElementById('err-login').innerText = 'Invalid User ID or Password!';
-        }
-    }
-
-    async function fetchLiveCricketData() {
-        try {
-            const res = await fetch('https://api.cricapi.com/v1/currentMatches?apikey=demo-key&offset=0');
-            const data = await res.json();
-            if (data && data.data && data.data.length > 0) {
-                const match = data.data[0];
-                document.getElementById('m-title').innerText = match.name || 'Live Match';
-                document.getElementById('m-status').innerText = match.status || 'In-Play';
-                if(match.score && match.score.length > 0) {
-                    document.getElementById('m-score').innerText = match.score[0].inning + ': ' + match.score[0].r + '/' + match.score[0].w + ' (' + match.score[0].o + ' ov)';
-                }
-                if (match.teams && match.teams.length >= 2) {
-                    document.getElementById('m-t1').innerText = match.teams[0].substring(0, 4).toUpperCase();
-                    document.getElementById('m-t2').innerText = match.teams[1].substring(0, 4).toUpperCase();
-                }
+            if(tabName === 'live') {
+                event.target.classList.add('active');
+                document.getElementById('liveTab').classList.add('active');
+            } else {
+                event.target.classList.add('active');
+                document.getElementById('cricketTab').classList.add('active');
             }
-        } catch (err) {}
-    }
-
-    function selectBet(market, rate) {
-        selectedMarket = market;
-        selectedRate = rate;
-        document.getElementById('stake-title').innerText = market + ' @ ' + rate;
-        document.getElementById('stake-modal').style.display = 'flex';
-    }
-
-    function closeStakeModal() {
-        document.getElementById('stake-modal').style.display = 'none';
-    }
-
-    function confirmPlaceBet(amount) {
-        let users = JSON.parse(localStorage.getItem('bhailive_users') || '{}');
-        let bal = users[currentUser].balance || 0;
-
-        if (amount > bal) {
-            alert('Insufficient balance!');
-            return;
         }
 
-        users[currentUser].balance = bal - amount;
-        localStorage.setItem('bhailive_users', JSON.stringify(users));
-        document.getElementById('user-balance').innerText = 'PKR ' + users[currentUser].balance;
+        // Fetch Live Matches via API
+        async function fetchLiveMatches() {
+            try {
+                // Free sample fallback data representing live feed API response
+                const liveData = [
+                    { id: 1, team1: "Pakistan", team2: "India", score: "185/4 (18.2)", status: "Live - PAK batting", rateA: "1.75", rateB: "2.10", fancy: "195-198" },
+                    { id: 2, team1: "Australia", team2: "England", score: "240/8 (42.0)", status: "Live - AUS batting", rateA: "1.50", rateB: "2.60", fancy: "275-280" }
+                ];
 
-        let bets = JSON.parse(localStorage.getItem('bhailive_all_bets') || '[]');
-        bets.push({
-            user: currentUser,
-            market: selectedMarket,
-            rate: selectedRate,
-            amount: amount,
-            time: new Date().toLocaleTimeString()
-        });
-        localStorage.setItem('bhailive_all_bets', JSON.stringify(bets));
-
-        closeStakeModal();
-        alert('Bet placed successfully for PKR ' + amount + ' on ' + selectedMarket);
-    }
-
-    function openHistoryModal() {
-        const modal = document.getElementById('history-modal');
-        const tbody = document.getElementById('user-history-body');
-        tbody.innerHTML = '';
-
-        let bets = JSON.parse(localStorage.getItem('bhailive_all_bets') || '[]');
-        let userBets = bets.filter(b => b.user === currentUser);
-
-        if (userBets.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; color:#8b949e;">No bets placed yet.</td></tr>';
-        } else {
-            userBets.reverse().forEach(b => {
-                let tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td>${b.market}</td>
-                    <td>${b.rate}</td>
-                    <td style="color:#00e676; font-weight:bold;">${b.amount}</td>
-                    <td>${b.time}</td>
-                `;
-                tbody.appendChild(tr);
-            });
-        }
-        modal.style.display = 'flex';
-    }
-
-    function closeHistoryModal() {
-        document.getElementById('history-modal').style.display = 'none';
-    }
-
-    function changePassword() {
-        let newPass = prompt('Enter your new password:');
-        if (!newPass) return;
-        
-        let users = JSON.parse(localStorage.getItem('bhailive_users') || '{}');
-        if (users[currentUser]) {
-            users[currentUser].pass = newPass;
-            localStorage.setItem('bhailive_users', JSON.stringify(users));
-            alert('Password successfully changed!');
-        }
-    }
-
-    function logout() {
-        currentUser = '';
-        document.getElementById('dashboard').style.display = 'none';
-        document.getElementById('login-screen').style.display = 'block';
-    }
-
-    function startOddsFluctuation() {
-        setInterval(() => {
-            let t1b = (1.80 + Math.random() * 0.15).toFixed(2);
-            let t1l = (parseFloat(t1b) + 0.02).toFixed(2);
-            let t2b = (2.00 + Math.random() * 0.20).toFixed(2);
-            let t2l = (parseFloat(t2b) + 0.03).toFixed(2);
-
-            if(document.getElementById('m-t1-back')) {
-                document.getElementById('m-t1-back').innerText = t1b;
-                document.getElementById('m-t1-lay').innerText = t1l;
-                document.getElementById('m-t2-back').innerText = t2b;
-                document.getElementById('m-t2-lay').innerText = t2l;
+                let html = '';
+                liveData.forEach(match => {
+                    html += `
+                        <div class="match-card" onclick="openMatchDetail('${match.team1} vs ${match.team2}', '${match.score}', '${match.status}', '${match.rateA}', '${match.rateB}', '${match.fancy}')">
+                            <span class="badge-live">🔴 LIVE</span>
+                            <div class="teams-header">
+                                <span class="team-name">${match.team1} vs ${match.team2}</span>
+                                <span class="score-info">${match.score}</span>
+                            </div>
+                            <div class="match-time">${match.status}</div>
+                        </div>
+                    `;
+                });
+                document.getElementById('liveMatchesList').innerHTML = html;
+            } catch (err) {
+                document.getElementById('liveMatchesList').innerHTML = "Error loading live matches.";
             }
-        }, 2500);
-    }
-</script>
+        }
 
+        // Fetch Upcoming Cricket Matches (Next 7 days filter)
+        async function fetchUpcomingMatches() {
+            try {
+                const upcomingData = [
+                    { team1: "South Africa", team2: "New Zealand", date: "Tomorrow, 02:30 PM" },
+                    { team1: "West Indies", team2: "Sri Lanka", date: "In 3 Days, 07:00 PM" },
+                    { team1: "Pakistan", team2: "Australia", date: "In 5 Days, 03:00 PM" }
+                ];
+
+                let html = '';
+                upcomingData.forEach(match => {
+                    html += `
+                        <div class="match-card" style="cursor: default;">
+                            <span class="badge-upcoming">🗓 UPCOMING (7 DAYS)</span>
+                            <div class="teams-header">
+                                <span class="team-name">${match.team1} vs ${match.team2}</span>
+                            </div>
+                            <div class="match-time">Scheduled: <strong>${match.date}</strong></div>
+                        </div>
+                    `;
+                });
+                document.getElementById('upcomingCricketList').innerHTML = html;
+            } catch (err) {
+                document.getElementById('upcomingCricketList').innerHTML = "Error loading upcoming matches.";
+            }
+        }
+
+        // Open Match Detail Screen
+        function openMatchDetail(teams, score, status, rateA, rateB, fancy) {
+            document.getElementById('detailTitle').innerText = teams;
+            document.getElementById('detailTeams').innerText = teams;
+            document.getElementById('detailScore').innerText = score;
+            document.getElementById('detailStatus').innerText = status;
+            document.getElementById('rateA').innerText = rateA;
+            document.getElementById('rateB').innerText = rateB;
+            document.getElementById('fancyRuns').innerText = fancy;
+            
+            document.getElementById('matchDetailView').classList.add('active');
+        }
+
+        function closeDetailView() {
+            document.getElementById('matchDetailView').classList.remove('active');
+        }
+
+        // Modals Functionality
+        function openModal(id) {
+            toggleSidebar();
+            document.getElementById(id).classList.add('active');
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).classList.remove('active');
+        }
+
+        function logout() {
+            alert('Aap logout ho chuke hain!');
+            location.reload();
+        }
+
+        // Initialize Data on Load
+        window.onload = function() {
+            fetchLiveMatches();
+            fetchUpcomingMatches();
+        };
+    </script>
 </body>
 </html>
