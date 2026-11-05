@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bhailive - Master Admin Control Panel</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
+        body { background-color: #0b0e14; color: #e6edf3; display: flex; justify-content: center; }
+        .app-container { width: 100%; max-width: 480px; background-color: #161b22; min-height: 100vh; padding: 15px; border-left: 1px solid #30363d; border-right: 1px solid #30363d; }
+        
+        .admin-header { border-bottom: 2px solid #ffab00; padding-bottom: 10px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; }
+        .admin-header h2 { color: #ffab00; font-size: 20px; }
+        
+        .box { background-color: #21262d; border: 1px solid #30363d; padding: 12px; border-radius: 8px; margin-bottom: 15px; }
+        .box h3 { color: #ffab00; font-size: 14px; margin-bottom: 10px; text-transform: uppercase; }
+        
+        .form-group { margin-bottom: 10px; }
+        .form-group label { display: block; font-size: 11px; color: #8b949e; margin-bottom: 4px; }
+        .form-group input { width: 100%; padding: 8px; background-color: #0d1117; border: 1px solid #30363d; border-radius: 4px; color: white; font-size: 13px; }
+        
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        .btn { width: 100%; padding: 10px; font-weight: bold; border: none; border-radius: 4px; cursor: pointer; }
+        .btn-green { background-color: #00e676; color: #000; }
+        .btn-yellow { background-color: #ffab00; color: #000; }
+        
+        .user-list { font-size: 12px; margin-top: 10px; background: #0d1117; padding: 8px; border-radius: 4px; }
+        
+        .bet-table { width: 100%; font-size: 11px; border-collapse: collapse; margin-top: 8px; background: #0d1117; }
+        .bet-table th, .bet-table td { border: 1px solid #30363d; padding: 6px; text-align: left; }
+        .bet-table th { color: #ffab00; }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    <div class="admin-header">
+        <h2>Bhailive Master Admin</h2>
+        <span style="font-size:11px; background:#ffab00; color:#000; padding:2px 6px; border-radius:4px; font-weight:bold;">ADMIN MODE</span>
+    </div>
+
+    <!-- 1. USER CREATION & BALANCE MANAGEMENT -->
+    <div class="box">
+        <h3>1. Create / Update User & Balance</h3>
+        <div class="grid-2">
+            <div class="form-group">
+                <label>Username</label>
+                <input type="text" id="new-user" placeholder="e.g. client1">
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <input type="text" id="new-pass" placeholder="e.g. 12345">
+            </div>
+        </div>
+        <div class="form-group">
+            <label>Initial Balance (PKR)</label>
+            <input type="number" id="new-bal" value="10000">
+        </div>
+        <button class="btn btn-green" onclick="createUser()">Save User & Balance</button>
+        <div class="user-list" id="users-display">Active Users: None</div>
+    </div>
+
+    <!-- 2. USERS BET HISTORY -->
+    <div class="box">
+        <h3>2. Users Bet History</h3>
+        <div style="max-height: 150px; overflow-y: auto;">
+            <table class="bet-table">
+                <thead>
+                    <tr>
+                        <th>User</th>
+                        <th>Market</th>
+                        <th>Rate</th>
+                        <th>Amount</th>
+                    </tr>
+                </thead>
+                <tbody id="bet-history-body">
+                    <tr><td colspan="4" style="text-align:center; color:#8b949e;">No bets placed yet.</td></tr>
+                </tbody>
+            </table>
+        </div>
+        <button class="btn btn-yellow" style="margin-top: 8px; font-size: 11px; padding: 6px;" onclick="loadBetHistory()">Refresh History</button>
+    </div>
+</div>
+
+<script>
+    function createUser() {
+        const u = document.getElementById('new-user').value.trim();
+        const p = document.getElementById('new-pass').value.trim();
+        const b = Number(document.getElementById('new-bal').value.trim());
+
+        if (!u || !p) return alert('Username aur Password dono bharein!');
+        
+        let users = JSON.parse(localStorage.getItem('bhailive_users') || '{}');
+        users[u] = { pass: p, balance: b };
+        localStorage.setItem('bhailive_users', JSON.stringify(users));
+        
+        document.getElementById('new-user').value = '';
+        document.getElementById('new-pass').value = '';
+        alert('User ' + u + ' Created/Updated Successfully!');
+        showUsers();
+    }
+
+    function showUsers() {
+        let users = JSON.parse(localStorage.getItem('bhailive_users') || '{}');
+        let keys = Object.keys(users);
+        document.getElementById('users-display').innerText = 'Active Users: ' + (keys.join(', ') || 'None');
+    }
+
+    function loadBetHistory() {
+        let bets = JSON.parse(localStorage.getItem('bhailive_all_bets') || '[]');
+        const tbody = document.getElementById('bet-history-body');
+        tbody.innerHTML = '';
+
+        if (bets.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; color:#8b949e;">No bets placed yet.</td></tr>';
+            return;
+        }
+
+        bets.reverse().forEach(b => {
+            let tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td><b>${b.user}</b></td>
+                <td>${b.market}</td>
+                <td>${b.rate}</td>
+                <td style="color:#00e676;">${b.amount}</td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+
+    showUsers();
+    loadBetHistory();
+</script>
+
+</body>
+</html>
