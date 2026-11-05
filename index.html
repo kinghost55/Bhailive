@@ -1,323 +1,39 @@
-
+<!DOCTYPE html>
 <html lang="ur">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bhailive - Live Cricket Updates</title>
+    <title>Bhailive - Live Cricket</title>
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
-        body {
-            background-color: #0d1117;
-            color: #ffffff;
-            display: flex;
-            justify-content: center;
-        }
-
-        .app-container {
-            width: 100%;
-            max-width: 480px;
-            background-color: #161b22;
-            min-height: 100vh;
-            box-shadow: 0 0 20px rgba(0,0,0,0.8);
-            position: relative;
-            padding-bottom: 30px;
-        }
-
-        /* --- LOGIN SCREEN --- */
-        #login-screen {
-            padding: 40px 20px;
-            text-align: center;
-        }
-
-        .brand-title {
-            color: #00e676;
-            font-size: 32px;
-            font-weight: bold;
-            margin-bottom: 10px;
-        }
-
-        .subtitle {
-            color: #8b949e;
-            font-size: 14px;
-            margin-bottom: 30px;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-            text-align: left;
-        }
-
-        .form-group label {
-            display: block;
-            color: #8b949e;
-            font-size: 13px;
-            margin-bottom: 5px;
-        }
-
-        .form-group input {
-            width: 100%;
-            padding: 12px;
-            background-color: #0d1117;
-            border: 1px solid #30363d;
-            border-radius: 8px;
-            color: white;
-            font-size: 16px;
-        }
-
-        .btn-login {
-            width: 100%;
-            padding: 14px;
-            background-color: #00e676;
-            color: #000;
-            font-weight: bold;
-            font-size: 16px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            margin-top: 10px;
-        }
-
-        /* --- MAIN DASHBOARD --- */
-        #dashboard {
-            display: none;
-        }
-
-        .app-header {
-            background-color: #21262d;
-            padding: 15px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 2px solid #00e676;
-        }
-
-        .app-header h2 {
-            color: #00e676;
-            font-size: 20px;
-        }
-
-        .user-tag {
-            background-color: #30363d;
-            padding: 5px 10px;
-            border-radius: 15px;
-            font-size: 12px;
-            color: #8b949e;
-        }
-
-        .tabs {
-            display: flex;
-            background-color: #161b22;
-            border-bottom: 1px solid #30363d;
-        }
-
-        .tab-btn {
-            flex: 1;
-            padding: 12px;
-            background: none;
-            border: none;
-            color: #8b949e;
-            font-weight: bold;
-            cursor: pointer;
-            border-bottom: 2px solid transparent;
-        }
-
-        .tab-btn.active {
-            color: #00e676;
-            border-bottom-color: #00e676;
-            background-color: #21262d;
-        }
-
-        .match-card {
-            background-color: #21262d;
-            margin: 15px;
-            border-radius: 10px;
-            padding: 15px;
-            border: 1px solid #30363d;
-        }
-
-        .live-badge {
-            background-color: #da3633;
-            color: white;
-            font-size: 10px;
-            padding: 3px 8px;
-            border-radius: 4px;
-            font-weight: bold;
-            display: inline-block;
-            margin-bottom: 10px;
-            animation: blink 1.5s infinite;
-        }
-
-        @keyframes blink {
-            50% { opacity: 0.5; }
-        }
-
-        .teams {
-            font-size: 16px;
-            font-weight: bold;
-            margin-bottom: 8px;
-        }
-
-        .live-score {
-            color: #00e676;
-            font-size: 14px;
-            margin-bottom: 15px;
-        }
-
-        /* --- RATES & ODDS --- */
-        .odds-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 10px;
-        }
-
-        .odds-table th {
-            font-size: 12px;
-            color: #8b949e;
-            padding-bottom: 8px;
-        }
-
-        .odds-box {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 10px;
-        }
-
-        .rate-btn {
-            flex: 1;
-            padding: 8px;
-            border-radius: 6px;
-            text-align: center;
-            font-weight: bold;
-            font-size: 14px;
-        }
-
-        .back { background-color: #1f6beb; color: white; }
-        .lay { background-color: #d73a49; color: white; }
-
-        /* --- FANCY SECTION --- */
-        .fancy-section {
-            margin-top: 20px;
-            border-top: 1px solid #30363d;
-            padding-top: 15px;
-        }
-
-        .fancy-title {
-            font-size: 14px;
-            color: #00e676;
-            margin-bottom: 10px;
-        }
-
-        .fancy-item {
-            background-color: #0d1117;
-            padding: 10px;
-            border-radius: 8px;
-            margin-bottom: 8px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .fancy-name {
-            font-size: 13px;
-        }
-
-        .fancy-buttons {
-            display: flex;
-            gap: 8px;
-        }
-
-        .btn-yes { background-color: #238636; color: white; padding: 6px 12px; border-radius: 4px; font-size: 12px; font-weight: bold; }
-        .btn-no { background-color: #da3633; color: white; padding: 6px 12px; border-radius: 4px; font-size: 12px; font-weight: bold; }
-
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; }
+        body { background-color: #0d1117; color: #ffffff; display: flex; justify-content: center; }
+        .container { width: 100%; max-width: 480px; background-color: #161b22; min-height: 100vh; padding: 20px; }
+        .title { color: #00e676; font-size: 24px; text-align: center; margin-bottom: 20px; font-weight: bold; }
+        .card { background-color: #21262d; padding: 15px; border-radius: 8px; margin-bottom: 15px; border: 1px solid #30363d; }
+        .badge { background-color: #da3633; color: white; font-size: 10px; padding: 3px 6px; border-radius: 4px; font-weight: bold; display: inline-block; margin-bottom: 8px; }
+        .teams { font-size: 16px; font-weight: bold; margin-bottom: 5px; }
+        .score { color: #00e676; font-size: 14px; margin-bottom: 10px; }
+        .odds { display: flex; gap: 10px; }
+        .btn { flex: 1; padding: 8px; text-align: center; border-radius: 5px; font-weight: bold; font-size: 13px; }
+        .pak { background-color: #1f6beb; color: white; }
+        .aus { background-color: #d73a49; color: white; }
     </style>
 </head>
 <body>
 
-<div class="app-container">
+<div class="container">
+    <div class="title">Bhailive Cricket</div>
 
-    <!-- LOGIN SCREEN -->
-    <div id="login-screen">
-        <div class="brand-title">Bhailive</div>
-        <div class="subtitle">Cricket Live Updates Platform</div>
-        
-        <form onsubmit="handleLogin(event)">
-            <div class="form-group">
-                <label>Username</label>
-                <input type="text" id="username" placeholder="Enter username" required>
-            </div>
-            <div class="form-group">
-                <label>Password</label>
-                <input type="password" id="password" placeholder="Enter password" required>
-            </div>
-            <button type="submit" class="btn-login">Login</button>
-        </form>
+    <div class="card">
+        <span class="badge">IN-PLAY</span>
+        <div class="teams">Pakistan vs Australia</div>
+        <div class="score">PAK: 210/3 (14.3 Overs)</div>
+        <div class="odds">
+            <div class="btn pak">PAK: 1.85</div>
+            <div class="btn aus">AUS: 2.10</div>
+        </div>
     </div>
-
-    <!-- DASHBOARD SCREEN -->
-    <div id="dashboard">
-        <div class="app-header">
-            <h2>Bhailive</h2>
-            <div class="user-tag" id="user-display">User: Demo</div>
-        </div>
-
-        <div class="tabs">
-            <button class="tab-btn active">In-Play (Live)</button>
-            <button class="tab-btn">Today</button>
-            <button class="tab-btn">Tomorrow</button>
-        </div>
-
-        <!-- LIVE MATCH CARD -->
-        <div class="match-card">
-            <span class="live-badge">IN-PLAY</span>
-            <div class="teams">Pakistan vs Australia</div>
-            <div class="live-score">PAK: 210/3 (14.3 Overs)</div>
-
-            <div class="odds-box">
-                <div class="rate-btn back">PAK: 1.85</div>
-                <div class="rate-btn lay">AUS: 2.10</div>
-            </div>
-
-            <!-- FANCY MARKET -->
-            <div class="fancy-section">
-                <div class="fancy-title">Fancy Session Market</div>
-                
-                <div class="fancy-item">
-                    <div class="fancy-name">1 Over Runs (PAK)</div>
-                    <div class="fancy-buttons">
-                        <span class="btn-no">NO (8)</span>
-                        <span class="btn-yes">YES (9)</span>
-                    </div>
-                </div>
-
-                <div class="fancy-item">
-                    <div class="fancy-name">6 Over Session Runs</div>
-                    <div class="fancy-buttons">
-                        <span class="btn-no">NO (48)</span>
-                        <span class="btn-yes">YES (50)</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-    </div>
-
 </div>
-
-<script>
-    function handleLogin(event) {
-        event.preventDefault();
-        const user = document.getElementById('username').value;
-        document.getElementById('user-display').innerText = 'User: ' + user;
-        document.getElementById('login-screen').style.display = 'none';
-        document.getElementById('dashboard').style.display = 'block';
-    }
-</script>
 
 </body>
 </html>
