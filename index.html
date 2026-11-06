@@ -273,7 +273,7 @@
     <header>
         <div class="logo">BHAI LIVE</div>
         <div class="header-right">
-            <div class="balance-box" id="userBalanceDisplay">Rs. 0</div>
+            <div class="balance-box" id="userBalanceDisplay">Rs. 15,000</div>
             <button class="menu-btn" onclick="toggleSidebar()">&#9776;</button>
         </div>
     </header>
@@ -358,7 +358,7 @@
             </div>
         </div>
 
-        <!-- Fancy Section (Dynamic per match) -->
+        <!-- Fancy Section -->
         <div class="section-header">📊 FANCY MARKET</div>
         <div style="background: #1a2332;" id="fancyContainer">
             <!-- Dynamic Fancies injected here -->
@@ -390,8 +390,12 @@
             } else {
                 document.getElementById('userBalanceDisplay').innerText = 'Rs. 15,000';
             }
+            
             fetchRealTimeMatches();
             fetchUpcomingMatches();
+
+            // Auto-refresh live matches every 30 seconds
+            setInterval(fetchRealTimeMatches, 30000);
         };
 
         function toggleSidebar() {
@@ -429,8 +433,12 @@
                         let r1 = (1.60 + (index * 0.12)).toFixed(2);
                         let r2 = (2.10 + (index * 0.15)).toFixed(2);
 
+                        let safeName = m.name.replace(/'/g, "\\'");
+                        let safeT1 = t1.replace(/'/g, "\\'");
+                        let safeT2 = t2.replace(/'/g, "\\'");
+
                         html += `
-                            <div class="match-card" onclick="openMatchDetail('${t1}', '${t2}', '${m.name}', '${r1}', '${r2}', ${index})">
+                            <div class="match-card" onclick="openMatchDetail('${safeT1}', '${safeT2}', '${safeName}', '${r1}', '${r2}', ${index})">
                                 <div class="match-title-bar">🏏 ${m.name} &bull; <span style="color:#ffb703;">${m.status}</span></div>
                                 <div class="odds-row">
                                     <div class="odd-box back-box">${r1} / ${(parseFloat(r1)+0.03).toFixed(2)}</div>
@@ -445,7 +453,7 @@
                     container.innerHTML = '<div style="text-align: center; padding: 40px; color: #ffb703;"><h3>No Match Live</h3></div>';
                 }
             } catch (err) {
-                document.getElementById('liveMatchesList').innerHTML = '<div style="text-align: center; padding: 40px; color: #ffb703;"><h3>No Match Live</h3></div>';
+                // Keep silent on network blips during background auto-refresh
             }
         }
 
@@ -464,8 +472,12 @@
                 let t1 = parts[0] ? parts[0].trim() : 'Team A';
                 let t2 = parts[1] ? parts[1].trim() : 'Team B';
 
+                let safeMatch = item.match.replace(/'/g, "\\'");
+                let safeT1 = t1.replace(/'/g, "\\'");
+                let safeT2 = t2.replace(/'/g, "\\'");
+
                 html += `
-                    <div class="match-card" onclick="openMatchDetail('${t1}', '${t2}', '${item.match}', '${item.odds[0]}', '${item.odds[2]}', ${index + 10})">
+                    <div class="match-card" onclick="openMatchDetail('${safeT1}', '${safeT2}', '${safeMatch}', '${item.odds[0]}', '${item.odds[2]}', ${index + 10})">
                         <div class="match-title-bar">Cricket > ${item.match} <span style="font-size:0.75rem; color:#a0aec0;">${item.date}</span></div>
                         <div class="odds-row">
                             <div class="odd-box back-box">${item.odds[0]} / ${item.odds[1]}</div>
@@ -488,7 +500,6 @@
             document.getElementById('t2Back').innerHTML = `${odd2}<span>120k</span>`;
             document.getElementById('t2Lay').innerHTML = `${(parseFloat(odd2)+0.05).toFixed(2)}<span>180k</span>`;
 
-            // Unique Dynamic Fancies per match using seed index
             let f1Score = 45 + (seed * 4) % 25;
             let f2Score = 15 + (seed * 3) % 15;
             let f3Score = 175 + (seed * 10) % 60;
