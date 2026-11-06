@@ -70,4 +70,101 @@
 
         <!-- Active Users List -->
         <div class="card">
-            <div class="card-title">
+            <div class="card-title">📋 Active Clients List</div>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Username</th>
+                        <th>Password</th>
+                        <th>Balance</th>
+                    </tr>
+                </thead>
+                <tbody id="userTableBody">
+                    <!-- Users list will appear here -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        let loggedDealer = null;
+
+        function dealerLogin() {
+            let u = document.getElementById('dUser').value.trim();
+            let p = document.getElementById('dPass').value.trim();
+
+            let dealers = JSON.parse(localStorage.getItem('bhai_dealers') || '[]');
+            console.log("Available Dealers:", dealers); // Debugging ke liye
+
+            let found = dealers.find(d => d.username === u && d.password === p);
+
+            if (found) {
+                loggedDealer = found;
+                document.getElementById('dealerLoginScreen').style.display = 'none';
+                document.getElementById('dealerDashboard').style.display = 'block';
+                document.getElementById('currentDealerName').innerText = `💼 ${found.username}`;
+                document.getElementById('currentDealerBalance').innerText = `Credit Balance: Rs. ${found.balance}`;
+                renderUsers();
+            } else {
+                alert('Ghalat Dealer Details! Pehle Admin panel se dealer banayein.');
+            }
+        }
+
+        function createUser() {
+            let u = document.getElementById('uName').value.trim();
+            let p = document.getElementById('uPass').value.trim();
+            let b = parseFloat(document.getElementById('uBal').value) || 0;
+
+            if(!u || !p) {
+                alert('Please fill all fields!');
+                return;
+            }
+
+            if(b > loggedDealer.balance) {
+                alert('Aapke paas itna credit balance nahi hai!');
+                return;
+            }
+
+            loggedDealer.balance -= b;
+            let dealers = JSON.parse(localStorage.getItem('bhai_dealers') || '[]');
+            let idx = dealers.findIndex(d => d.username === loggedDealer.username);
+            if(idx !== -1) dealers[idx].balance = loggedDealer.balance;
+            localStorage.setItem('bhai_dealers', JSON.stringify(dealers));
+
+            let users = JSON.parse(localStorage.getItem('bhai_users') || '[]');
+            users.push({ username: u, password: p, balance: b, createdBy: loggedDealer.username });
+            localStorage.setItem('bhai_users', JSON.stringify(users));
+
+            document.getElementById('currentDealerBalance').innerText = `Credit Balance: Rs. ${loggedDealer.balance}`;
+            renderUsers();
+            alert(`User '${u}' created successfully!`);
+
+            document.getElementById('uName').value = '';
+            document.getElementById('uPass').value = '';
+            document.getElementById('uBal').value = '';
+        }
+
+        function renderUsers() {
+            let users = JSON.parse(localStorage.getItem('bhai_users') || '[]');
+            let myUsers = users.filter(u => u.createdBy === loggedDealer.username);
+            let tbody = document.getElementById('userTableBody');
+            tbody.innerHTML = '';
+
+            if(myUsers.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="3" style="text-align:center; color:#8a99ad;">No users created yet.</td></tr>`;
+                return;
+            }
+
+            myUsers.forEach(u => {
+                tbody.innerHTML += `
+                    <tr>
+                        <td><strong>${u.username}</strong></td>
+                        <td>${u.password}</td>
+                        <td style="color:#2ed573; font-weight:bold;">Rs. ${u.balance}</td>
+                    </tr>
+                `;
+            });
+        }
+    </script>
+</body>
+</html>
