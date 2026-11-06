@@ -45,7 +45,6 @@
             font-weight: bold;
         }
 
-        /* Column-based Dashboard Layout */
         .admin-grid {
             display: grid;
             grid-template-columns: 1fr 2fr;
@@ -110,13 +109,31 @@
             opacity: 0.9;
         }
 
+        .btn-sm {
+            padding: 5px 10px;
+            font-size: 0.8rem;
+            width: auto;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            border: none;
+        }
+
         .btn-danger {
             background: #ff4757;
             color: white;
-            margin-top: 10px;
         }
 
-        /* Search & Data Tables */
+        .btn-success {
+            background: #2ed573;
+            color: black;
+        }
+
+        .btn-info {
+            background: #3742fa;
+            color: white;
+        }
+
         .search-box {
             width: 100%;
             padding: 10px;
@@ -130,13 +147,13 @@
         .data-table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             margin-top: 10px;
         }
 
         .data-table th, .data-table td {
             border: 1px solid #2a364f;
-            padding: 10px;
+            padding: 8px;
             text-align: left;
         }
 
@@ -145,29 +162,43 @@
             color: #ffb703;
         }
 
-        .shortcut-hints {
-            font-size: 0.8rem;
-            color: #8a99ad;
-            margin-top: 8px;
+        .modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: #1a2332;
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px solid #ffb703;
+            z-index: 3000;
+            width: 90%;
+            max-width: 500px;
+            max-height: 80vh;
+            overflow-y: auto;
         }
-
-        .shortcut-hints span {
-            color: #2ed573;
-            font-weight: bold;
+        .modal.active { display: block; }
+        .overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.7);
+            display: none;
+            z-index: 2999;
         }
+        .overlay.active { display: block; }
     </style>
 </head>
 <body>
 
     <div class="admin-header">
-        <div class="admin-title">👑 Bhai Live - Admin Panel</div>
+        <div class="admin-title">👑 Bhai Live - Admin Control Panel</div>
         <button class="logout-admin" onclick="adminLogout()">Logout</button>
     </div>
 
     <div class="admin-grid">
         <!-- Left Column: User Creation & Balance Control -->
         <div>
-            <!-- Create User Card -->
             <div class="card">
                 <div class="card-title">👤 Create New User Account</div>
                 <div class="form-group">
@@ -175,7 +206,7 @@
                     <input type="text" id="newUsername" placeholder="Enter username">
                 </div>
                 <div class="form-group">
-                    <label>Initial Password</label>
+                    <label>Password</label>
                     <input type="password" id="newPassword" placeholder="Enter password">
                 </div>
                 <div class="form-group">
@@ -185,31 +216,28 @@
                 <button class="btn" onclick="createUser()">Create Account</button>
             </div>
 
-            <!-- Balance Adjustment Card -->
             <div class="card">
-                <div class="card-title">💰 Balance Adjustment & Shortcuts</div>
+                <div class="card-title">💰 Deposit & Withdraw Control</div>
                 <div class="form-group">
                     <label>Target Username</label>
-                    <input type="text" id="targetUser" placeholder="Search user to adjust">
+                    <input type="text" id="targetUser" placeholder="Enter exact username">
                 </div>
                 <div class="form-group">
                     <label>Amount (Rs.)</label>
                     <input type="number" id="targetAmount" placeholder="Enter amount">
                 </div>
                 <div style="display: flex; gap: 10px;">
-                    <button class="btn" style="background:#2ed573;" onclick="adjustBalance('Deposit')">Deposit ('D')</button>
-                    <button class="btn" style="background:#ff4757; color:white;" onclick="adjustBalance('Withdraw')">Withdraw ('W')</button>
+                    <button class="btn btn-success" onclick="adjustBalance('Deposit')">Deposit</button>
+                    <button class="btn btn-danger" onclick="adjustBalance('Withdraw')">Withdraw</button>
                 </div>
-                <div class="shortcut-hints">Quick Keyboard Shortcuts: Use <span>'W'</span> for Withdraw, <span>'D'</span> for Deposit, <span>'B'</span> for Balance check.</div>
             </div>
         </div>
 
-        <!-- Right Column: User Management, Records & History Deletion -->
+        <!-- Right Column: User Management & History -->
         <div>
-            <!-- Search & User Records Table -->
             <div class="card">
-                <div class="card-title">📋 Active Users & Data Records</div>
-                <input type="text" class="search-box" id="userSearch" placeholder="Search users by name..." onkeyup="filterUsers()">
+                <div class="card-title">📋 Active Users & Management</div>
+                <input type="text" class="search-box" id="userSearch" placeholder="Search user by name..." onkeyup="filterUsers()">
                 
                 <div style="overflow-x: auto;">
                     <table class="data-table" id="usersTable">
@@ -217,55 +245,95 @@
                             <tr>
                                 <th>Username</th>
                                 <th>Balance</th>
-                                <th>Status</th>
-                                <th>Actions</th>
+                                <th>Password</th>
+                                <th>History</th>
+                                <th>Action</th>
                             </tr>
                         </thead>
                         <tbody id="usersTableBody">
-                            <tr>
-                                <td>Bhatti_User1</td>
-                                <td>Rs. 15,000</td>
-                                <td style="color: #2ed573;">Active</td>
-                                <td><button class="btn-danger" style="padding: 4px 8px; margin:0;" onclick="deleteUser('Bhatti_User1')">Delete</button></td>
-                            </tr>
+                            <!-- Dynamic Users Loaded Here -->
                         </tbody>
                     </table>
-                </div>
-            </div>
-
-            <!-- System-wide History & Deletion Permissions -->
-            <div class="card">
-                <div class="card-title">🗑️ System-Wide History & Granular Deletion</div>
-                <p style="font-size: 0.85rem; color: #a0aec0; margin-bottom: 12px;">Manage system logs, user logs, and individual match history records.</p>
-                <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-                    <button class="btn btn-danger" style="flex: 1;" onclick="clearMatchHistory()">Clear All Match Histories</button>
-                    <button class="btn btn-danger" style="flex: 1;" onclick="resetSystemLogs()">Reset System Logs</button>
                 </div>
             </div>
         </div>
     </div>
 
+    <div class="overlay" id="overlay" onclick="closeModal()"></div>
+    <div class="modal" id="adminModal">
+        <h3 id="modalTitle" style="color: #ffb703; margin-bottom: 10px;">Details</h3>
+        <div id="modalBody"></div>
+        <button class="btn btn-danger" style="margin-top: 15px;" onclick="closeModal()">Close</button>
+    </div>
+
     <script>
-        // Create User Function
+        window.onload = function() {
+            renderUsersTable();
+        };
+
+        function getUsers() {
+            let users = localStorage.getItem('bhai_users');
+            if (!users) {
+                users = JSON.stringify([
+                    { username: 'Bhatti_User1', password: '123', balance: 15000, history: [{type: 'Deposit', amount: 15000, date: '2026-11-06'}] }
+                ]);
+                localStorage.setItem('bhai_users', users);
+            }
+            return JSON.parse(users);
+        }
+
+        function saveUsers(users) {
+            localStorage.setItem('bhai_users', JSON.stringify(users));
+        }
+
+        function renderUsersTable() {
+            const users = getUsers();
+            const tbody = document.getElementById('usersTableBody');
+            tbody.innerHTML = '';
+
+            users.forEach((u, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><strong>${u.username}</strong></td>
+                    <td style="color: #2ed573; font-weight: bold;">Rs. ${u.balance}</td>
+                    <td><input type="text" value="${u.password}" style="background:#243044; border:1px solid #2a364f; color:white; width:80px; padding:3px; border-radius:3px;" onchange="updatePassword(${index}, this.value)"></td>
+                    <td><button class="btn-sm btn-info" onclick="viewHistory('${u.username}')">📜 History</button></td>
+                    <td>
+                        <div style="display: flex; gap: 5px;">
+                            <button class="btn-sm btn-success" onclick="quickEditUser(${index})">✏️ Edit</button>
+                            <button class="btn-sm btn-danger" onclick="deleteUser('${u.username}')">🗑️ Delete</button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
         function createUser() {
-            const user = document.getElementById('newUsername').value;
-            const pass = document.getElementById('newPassword').value;
-            const bal = document.getElementById('newBalance').value;
+            const user = document.getElementById('newUsername').value.trim();
+            const pass = document.getElementById('newPassword').value.trim();
+            const bal = parseFloat(document.getElementById('newBalance').value) || 0;
 
             if(!user || !pass) {
                 alert('Please enter both username and password!');
                 return;
             }
 
-            const tbody = document.getElementById('usersTableBody');
-            const row = document.createElement('tr');
-            row.innerHTML = `
-                <td>${user}</td>
-                <td>Rs. ${bal || 0}</td>
-                <td style="color: #2ed573;">Active</td>
-                <td><button class="btn-danger" style="padding: 4px 8px; margin:0;" onclick="this.parentElement.parentElement.remove()">Delete</button></td>
-            `;
-            tbody.appendChild(row);
+            let users = getUsers();
+            if(users.some(u => u.username === user)) {
+                alert('User with this username already exists!');
+                return;
+            }
+
+            users.push({
+                username: user,
+                password: pass,
+                balance: bal,
+                history: bal > 0 ? [{type: 'Initial Deposit', amount: bal, date: new Date().toLocaleDateString()}] : []
+            });
+
+            saveUsers(users);
+            renderUsersTable();
             alert(`User '${user}' created successfully!`);
             
             document.getElementById('newUsername').value = '';
@@ -273,19 +341,104 @@
             document.getElementById('newBalance').value = '';
         }
 
-        // Balance Adjustment
         function adjustBalance(type) {
-            const user = document.getElementById('targetUser').value;
-            const amount = document.getElementById('targetAmount').value;
+            const target = document.getElementById('targetUser').value.trim();
+            const amount = parseFloat(document.getElementById('targetAmount').value);
 
-            if(!user || !amount) {
-                alert('Please provide username and amount.');
+            if(!target || isNaN(amount) || amount <= 0) {
+                alert('Please provide a valid username and amount.');
                 return;
             }
-            alert(`Successfully processed ${type} of Rs. ${amount} for user '${user}'.`);
+
+            let users = getUsers();
+            let userObj = users.find(u => u.username === target);
+
+            if(!userObj) {
+                alert('User not found!');
+                return;
+            }
+
+            if(type === 'Deposit') {
+                userObj.balance += amount;
+                userObj.history.push({type: 'Deposit', amount: amount, date: new Date().toLocaleDateString()});
+                alert(`Successfully deposited Rs. ${amount} to '${target}'. New Balance: Rs. ${userObj.balance}`);
+            } else {
+                if(userObj.balance < amount) {
+                    alert('User does not have enough balance for this withdrawal!');
+                    return;
+                }
+                userObj.balance -= amount;
+                userObj.history.push({type: 'Withdraw', amount: amount, date: new Date().toLocaleDateString()});
+                alert(`Successfully withdrew Rs. ${amount} from '${target}'. New Balance: Rs. ${userObj.balance}`);
+            }
+
+            saveUsers(users);
+            renderUsersTable();
+            document.getElementById('targetUser').value = '';
+            document.getElementById('targetAmount').value = '';
         }
 
-        // Search Filter for Users
+        function updatePassword(index, newPass) {
+            let users = getUsers();
+            users[index].password = newPass;
+            saveUsers(users);
+            alert('Password updated successfully!');
+        }
+
+        function quickEditUser(index) {
+            let users = getUsers();
+            let u = users[index];
+            let newName = prompt("Enter new username:", u.username);
+            if(newName && newName.trim() !== "") {
+                if(users.some((usr, i) => usr.username === newName && i !== index)) {
+                    alert("Username already exists!");
+                    return;
+                }
+                u.username = newName.trim();
+                saveUsers(users);
+                renderUsersTable();
+                alert("Username updated successfully!");
+            }
+        }
+
+        function deleteUser(username) {
+            if(confirm(`Are you sure you want to delete user '${username}'?`)) {
+                let users = getUsers();
+                users = users.filter(u => u.username !== username);
+                saveUsers(users);
+                renderUsersTable();
+                alert(`User '${username}' deleted.`);
+            }
+        }
+
+        function viewHistory(username) {
+            let users = getUsers();
+            let u = users.find(usr => usr.username === username);
+            if(!u) return;
+
+            document.getElementById('modalTitle').innerText = `History: ${u.username}`;
+            let html = `<p style="margin-bottom:10px; color:#ffb703;">Current Balance: Rs. ${u.balance}</p>`;
+            
+            if(u.history && u.history.length > 0) {
+                html += `<table class="data-table"><thead><tr><th>Type</th><th>Amount</th><th>Date</th></tr></thead><tbody>`;
+                u.history.forEach(h => {
+                    html += `<tr><td>${h.type}</td><td style="color:#2ed573;">Rs. ${h.amount}</td><td>${h.date}</td></tr>`;
+                });
+                html += `</tbody></table>`;
+            } else {
+                html += `<p style="color:#8a99ad;">No history recorded yet.</p>`;
+            }
+
+            document.getElementById('modalBody').innerHTML = html;
+            document.getElementById('adminModal').classList.add('active');
+            document.getElementById('overlay').classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('adminModal').classList.remove('active');
+            document.getElementById('overlay').classList.remove('active');
+        }
+
         function filterUsers() {
             let input = document.getElementById('userSearch').value.toLowerCase();
             let table = document.getElementById('usersTable');
@@ -300,48 +453,10 @@
             }
         }
 
-        // Granular Deletion Handlers
-        function deleteUser(username) {
-            if(confirm(`Are you sure you want to delete user ${username}?`)) {
-                alert(`User ${username} deleted.`);
-            }
-        }
-
-        function clearMatchHistory() {
-            if(confirm('Are you sure you want to clear all match bet records system-wide?')) {
-                alert('All match history records wiped successfully.');
-            }
-        }
-
-        function resetSystemLogs() {
-            if(confirm('Reset all system transaction and activity logs?')) {
-                alert('System logs have been reset.');
-            }
-        }
-
         function adminLogout() {
             alert('Admin logged out securely.');
             location.reload();
         }
-
-        // Shortcut Key Listeners ('W', 'D', 'B')
-        document.addEventListener('keydown', function(event) {
-            if(event.key.toLowerCase() === 'w') {
-                const target = document.getElementById('targetUser');
-                if(document.activeElement !== target) {
-                    target.focus();
-                    console.log('Shortcut W triggered: Focus on target user for withdrawal.');
-                }
-            } else if(event.key.toLowerCase() === 'd') {
-                const target = document.getElementById('targetUser');
-                if(document.activeElement !== target) {
-                    target.focus();
-                    console.log('Shortcut D triggered: Focus on target user for deposit.');
-                }
-            } else if(event.key.toLowerCase() === 'b') {
-                alert('Quick Balance Shortcut Triggered: System checks active pools.');
-            }
-        });
     </script>
 </body>
 </html>
