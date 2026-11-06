@@ -94,7 +94,6 @@
             let userInput = document.getElementById('aUser').value.trim();
             let passInput = document.getElementById('aPass').value.trim();
 
-            // Direct check
             if(userInput === 'admin' && passInput === '1212') {
                 document.getElementById('loginScreen').style.display = 'none';
                 document.getElementById('adminDashboard').style.display = 'block';
@@ -121,7 +120,7 @@
             renderDealers();
             alert(`Dealer '${u}' Created Successfully!`);
 
-            document.getElementById('dName.value = '';
+            document.getElementById('dName').value = '';
             document.getElementById('dPass').value = '';
             document.getElementById('dBal').value = '';
         }
