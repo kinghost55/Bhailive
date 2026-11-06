@@ -1,4 +1,4 @@
-<!html html>
+<!DOCTYPE html>
 <html lang="ur" dir="ltr">
 <head>
     <meta charset="UTF-8">
@@ -23,7 +23,7 @@
         /* Top Header */
         header {
             background-color: #1a2332;
-            padding: 12px 15px;
+            padding: 10px 15px;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -34,13 +34,30 @@
         }
 
         .logo {
-            font-size: 1.3rem;
+            font-size: 1.2rem;
             font-weight: bold;
             color: #ffb703;
         }
 
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Balance Box Near Menu */
+        .balance-box {
+            background: #243044;
+            border: 1px solid #ffb703;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            color: #2ed573;
+            font-weight: bold;
+        }
+
         .menu-btn {
-            font-size: 1.6rem;
+            font-size: 1.5rem;
             cursor: pointer;
             background: none;
             border: none;
@@ -255,7 +272,10 @@
     <!-- Header -->
     <header>
         <div class="logo">BHAI LIVE</div>
-        <button class="menu-btn" onclick="toggleSidebar()">&#9776;</button>
+        <div class="header-right">
+            <div class="balance-box" id="userBalanceDisplay">Rs. 15,000</div>
+            <button class="menu-btn" onclick="toggleSidebar()">&#9776;</button>
+        </div>
     </header>
 
     <!-- Tabs -->
@@ -340,7 +360,7 @@
 
         <!-- Fancy Section -->
         <div class="section-header">📊 FANCY MARKET</div>
-        <div style="background: #1a2332;">
+        <div style="background: #1a2332;" id="fancyContainer">
             <div style="display: flex; justify-content: space-between; background: #243044; padding: 6px 10px; font-size: 0.8rem; font-weight: bold;">
                 <span>SELECTION</span>
                 <div style="display: flex; gap: 45px;">
@@ -350,7 +370,7 @@
             </div>
 
             <div class="runner-row">
-                <span style="font-size: 0.85rem;">1st Innings 10 Over Runs</span>
+                <span style="font-size: 0.85rem;" id="fancy1Text">1st Innings 10 Over Runs</span>
                 <div class="odds-grid-2">
                     <div class="odd-cell not-pink">72<span style="color:#000;">100</span></div>
                     <div class="odd-cell yes-blue">73<span style="color:#000;">100</span></div>
@@ -358,18 +378,10 @@
             </div>
 
             <div class="runner-row">
-                <span style="font-size: 0.85rem;">Fall of 1st Wicket</span>
+                <span style="font-size: 0.85rem;" id="fancy2Text">Fall of 1st Wicket</span>
                 <div class="odds-grid-2">
                     <div class="odd-cell not-pink">35<span style="color:#000;">100</span></div>
                     <div class="odd-cell yes-blue">36<span style="color:#000;">100</span></div>
-                </div>
-            </div>
-
-            <div class="runner-row">
-                <span style="font-size: 0.85rem;">Player Runs (Top Batsman)</span>
-                <div class="odds-grid-2">
-                    <div class="odd-cell not-pink">48<span style="color:#000;">100</span></div>
-                    <div class="odd-cell yes-blue">49<span style="color:#000;">100</span></div>
                 </div>
             </div>
         </div>
@@ -391,6 +403,18 @@
     </div>
 
     <script>
+        // Load User Balance dynamically
+        window.onload = function() {
+            let currentUser = localStorage.getItem('bhai_logged_user') || 'Bhatti_User1';
+            let users = JSON.parse(localStorage.getItem('bhai_users') || '[]');
+            let found = users.find(u => u.username === currentUser);
+            if(found) {
+                document.getElementById('userBalanceDisplay').innerText = 'Rs. ' + found.balance;
+            }
+            fetchRealTimeMatches();
+            fetchUpcomingMatches();
+        };
+
         function toggleSidebar() {
             document.getElementById('sidebar').classList.toggle('active');
             document.getElementById('overlay').classList.toggle('active');
@@ -409,7 +433,7 @@
             }
         }
 
-        // Real-Time API Data (Asli Match Only)
+        // Real-Time API Data (Asli Match Only with Dynamic Team Names & Rates)
         async function fetchRealTimeMatches() {
             try {
                 let res = await fetch('https://api.cricapi.com/v1/currentMatches?apikey=PwD74O2768.432&offset=0');
@@ -419,17 +443,22 @@
                 
                 if (data && data.data && data.data.length > 0) {
                     let html = '';
-                    data.data.forEach(m => {
-                        let t1 = m.teamInfo && m.teamInfo[0] ? m.teamInfo[0].name : (m.name.split(' vs ')[0] || 'Team A');
-                        let t2 = m.teamInfo && m.teamInfo[1] ? m.teamInfo[1].name : (m.name.split(' vs ')[1] || 'Team B');
+                    data.data.forEach((m, index) => {
+                        let parts = m.name.split(' v ');
+                        let t1 = parts[0] ? parts[0].trim() : (m.teamInfo && m.teamInfo[0] ? m.teamInfo[0].name : 'Team A');
+                        let t2 = parts[1] ? parts[1].trim() : (m.teamInfo && m.teamInfo[1] ? m.teamInfo[1].name : 'Team B');
                         
+                        // Dynamic odds variations based on index
+                        let r1 = (1.70 + (index * 0.15)).toFixed(2);
+                        let r2 = (2.05 + (index * 0.10)).toFixed(2);
+
                         html += `
-                            <div class="match-card" onclick="openMatchDetail('${t1}', '${t2}', '${m.name}')">
+                            <div class="match-card" onclick="openMatchDetail('${t1}', '${t2}', '${m.name}', '${r1}', '${r2}')">
                                 <div class="match-title-bar">🏏 ${m.name} &bull; <span style="color:#ffb703;">${m.status}</span></div>
                                 <div class="odds-row">
-                                    <div class="odd-box back-box">1.82 / 1.85</div>
-                                    <div class="odd-box" style="background:#243044; color:#a0aec0; font-size:0.75rem;">LIVE ODDS</div>
-                                    <div class="odd-box lay-box">2.15 / 2.20</div>
+                                    <div class="odd-box back-box">${r1} / ${(parseFloat(r1)+0.03).toFixed(2)}</div>
+                                    <div class="odd-box" style="background:#243044; color:#2ed573; font-size:0.75rem;">LIVE ODDS</div>
+                                    <div class="odd-box lay-box">${r2} / ${(parseFloat(r2)+0.05).toFixed(2)}</div>
                                 </div>
                             </div>
                         `;
@@ -455,10 +484,14 @@
 
             let html = '';
             upcoming.forEach(item => {
+                let parts = item.match.split(' v ');
+                let t1 = parts[0] ? parts[0].trim() : 'Team A';
+                let t2 = parts[1] ? parts[1].trim() : 'Team B';
+
                 html += `
-                    <div class="match-card" onclick="openMatchDetail('Team 1', 'Team 2', '${item.match}')">
+                    <div class="match-card" onclick="openMatchDetail('${t1}', '${t2}', '${item.match}', '${item.odds[0]}', '${item.odds[2]}')">
                         <div class="match-title-bar">Cricket > ${item.match} <span style="font-size:0.75rem; color:#a0aec0;">${item.date}</span></div>
-                        .odds-row">
+                        <div class="odds-row">
                             <div class="odd-box back-box">${item.odds[0]} / ${item.odds[1]}</div>
                             <div class="odd-box" style="background:#243044; color:#2ed573; font-size:0.75rem;">UPCOMING</div>
                             <div class="odd-box lay-box">${item.odds[2]} / ${item.odds[3]}</div>
@@ -469,10 +502,21 @@
             document.getElementById('upcomingCricketList').innerHTML = html;
         }
 
-        function openMatchDetail(t1, t2, fullName) {
+        function openMatchDetail(t1, t2, fullName, odd1, odd2) {
             document.getElementById('detailTitle').innerText = fullName;
             document.getElementById('team1Name').innerText = t1;
             document.getElementById('team2Name').innerText = t2;
+            
+            // Set dynamic odds for this specific match
+            document.getElementById('t1Back').innerHTML = `${odd1}<span>150k</span>`;
+            document.getElementById('t1Lay').innerHTML = `${(parseFloat(odd1)+0.03).toFixed(2)}<span>200k</span>`;
+            document.getElementById('t2Back').innerHTML = `${odd2}<span>120k</span>`;
+            document.getElementById('t2Lay').innerHTML = `${(parseFloat(odd2)+0.05).toFixed(2)}<span>180k</span>`;
+
+            // Dynamic Fancy texts based on teams
+            document.getElementById('fancy1Text').innerText = `${t1} 1st Innings 10 Over Runs`;
+            document.getElementById('fancy2Text').innerText = `Fall of 1st Wicket (${t2})`;
+
             document.getElementById('matchDetailView').classList.add('active');
         }
 
@@ -490,14 +534,10 @@
         }
 
         function logout() {
+            localStorage.removeItem('bhai_logged_user');
             alert('Aap logout ho chuke hain!');
             location.reload();
         }
-
-        window.onload = function() {
-            fetchRealTimeMatches();
-            fetchUpcomingMatches();
-        };
     </script>
 </body>
 </html>
