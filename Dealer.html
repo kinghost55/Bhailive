@@ -6,152 +6,68 @@
     <title>Dealer Panel - Bhai Live</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
-        body { background-color: #0f141f; color: #ffffff; padding: 20px; }
-        .dealer-header { display: flex; justify-content: space-between; align-items: center; background: #1a2332; padding: 15px; border-radius: 8px; border-bottom: 2px solid #2ed573; margin-bottom: 20px; }
-        .dealer-title { color: #2ed573; font-size: 1.3rem; font-weight: bold; }
+        body { background-color: #0f141f; color: #ffffff; padding: 15px; }
         .login-wrapper { display: flex; justify-content: center; align-items: center; height: 80vh; }
-        .login-card { background: #1a2332; border: 1px solid #2ed573; border-radius: 10px; padding: 30px; width: 100%; max-width: 380px; text-align: center; }
+        .login-card { background: #1a2332; border: 1px solid #2ed573; border-radius: 10px; padding: 30px; width: 100%; max-width: 400px; text-align: center; }
         .form-group { margin-bottom: 15px; text-align: left; }
-        .form-group label { display: block; margin-bottom: 5px; font-size: 0.85rem; color: #a0aec0; }
+        .form-group label { display: block; margin-bottom: 5px; font-size: 0.9rem; color: #a0aec0; }
         .form-group input { width: 100%; padding: 10px; background: #243044; border: 1px solid #2a364f; color: white; border-radius: 5px; }
         .btn { background: #2ed573; color: black; border: none; padding: 10px; border-radius: 5px; font-weight: bold; cursor: pointer; width: 100%; }
+        #dealerDashboard { display: none; max-width: 750px; margin: 0 auto; }
+        .dealer-header { display: flex; justify-content: space-between; align-items: center; background: #1a2332; padding: 15px; border-radius: 8px; border-bottom: 2px solid #2ed573; margin-bottom: 20px; }
         .card { background: #1a2332; border: 1px solid #2a364f; border-radius: 8px; padding: 20px; margin-bottom: 20px; }
         .card-title { color: #2ed573; font-size: 1.1rem; margin-bottom: 15px; border-bottom: 1px solid #2a364f; padding-bottom: 5px; }
-        .grid { display: grid; grid-template-columns: 1fr 2fr; gap: 20px; }
-        @media(max-width: 800px) { .grid { grid-template-columns: 1fr; } }
         .data-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
         .data-table th, .data-table td { border: 1px solid #2a364f; padding: 8px; text-align: left; }
         .data-table th { background: #243044; color: #2ed573; }
-        #dealerDashboard { display: none; }
     </style>
 </head>
 <body>
 
-    <!-- Dealer Login -->
+    <!-- Dealer Login Screen -->
     <div class="login-wrapper" id="dealerLoginScreen">
         <div class="login-card">
             <h2 style="color:#2ed573; margin-bottom:15px;">💼 Dealer Login</h2>
             <div class="form-group">
                 <label>Dealer Username</label>
-                <input type="text" id="dUser" placeholder="Enter dealer username">
+                <input type="text" id="dUser" placeholder="Enter Dealer Username">
             </div>
             <div class="form-group">
                 <label>Dealer Password</label>
-                <input type="password" id="dPass" placeholder="Enter password">
+                <input type="password" id="dPass" placeholder="Enter Password">
             </div>
-            <button class="btn" onclick="dealerLogin()">Login as Dealer</button>
+            <button class="btn" onclick="dealerLogin()">Login</button>
         </div>
     </div>
 
     <!-- Dealer Dashboard -->
     <div id="dealerDashboard">
         <div class="dealer-header">
-            <div class="dealer-title">💼 Dealer Panel (<span id="currentDealerName">Dealer</span>)</div>
             <div>
-                <span style="margin-right: 15px; color: #ffb703; font-weight: bold;">My Credit: Rs. <span id="dealerCredit">0</span></span>
-                <button style="background:#ff4757; color:white; border:none; padding:6px 12px; border-radius:4px; cursor:pointer;" onclick="dealerLogout()">Logout</button>
+                <h3 id="currentDealerName" style="color:#2ed573;">Dealer Panel</h3>
+                <span id="currentDealerBalance" style="font-size:0.85rem; color:#ffb703;">Balance: Rs. 0</span>
             </div>
+            <button style="background:#ff4757; color:white; border:none; padding:6px 12px; border-radius:4px; cursor:pointer;" onclick="location.reload()">Logout</button>
         </div>
 
-        <div class="grid">
-            <div>
-                <div class="card">
-                    <div class="card-title">➕ Create Customer Account</div>
-                    <div class="form-group">
-                        <label>Customer Username</label>
-                        <input type="text" id="custName" placeholder="Enter username">
-                    </div>
-                    <div class="form-group">
-                        <label>Password</label>
-                        <input type="password" id="custPass" placeholder="Enter password">
-                    </div>
-                    <div class="form-group">
-                        <label>Initial Balance</label>
-                        <input type="number" id="custBal" placeholder="0.00">
-                    </div>
-                    <button class="btn" onclick="createCustomer()">Create Customer</button>
-                </div>
+        <!-- Create User Card -->
+        <div class="card">
+            <div class="card-title">👤 Create Client Account</div>
+            <div class="form-group">
+                <label>Client Username</label>
+                <input type="text" id="uName" placeholder="Enter client username">
             </div>
-
-            <div>
-                <div class="card">
-                    <div class="card-title">👥 My Customers List</div>
-                    <table class="data-table">
-                        <thead>
-                            <tr>
-                                <th>Username</th>
-                                <th>Balance</th>
-                                <th>Password</th>
-                            </tr>
-                        </thead>
-                        <tbody id="customerTableBody"></tbody>
-                    </table>
-                </div>
+            <div class="form-group">
+                <label>Client Password</label>
+                <input type="password" id="uPass" placeholder="Enter password">
             </div>
+            <div class="form-group">
+                <label>Assign Balance</label>
+                <input type="number" id="uBal" placeholder="0.00">
+            </div>
+            <button class="btn" onclick="createUser()">Create Client</button>
         </div>
-    </div>
 
-    <script>
-        let currentDealer = null;
-
-        function dealerLogin() {
-            let u = document.getElementById('dUser').value.trim();
-            let p = document.getElementById('dPass').value.trim();
-            let dealers = JSON.parse(localStorage.getItem('bhai_dealers') || '[]');
-
-            let found = dealers.find(d => d.username === u && d.password === p);
-            if(found) {
-                currentDealer = found;
-                document.getElementById('dealerLoginScreen').style.display = 'none';
-                document.getElementById('dealerDashboard').style.display = 'block';
-                document.getElementById('currentDealerName').innerText = found.username;
-                document.getElementById('dealerCredit').innerText = found.balance;
-                renderCustomers();
-            } else {
-                alert('Ghalat Dealer Username ya Password!');
-            }
-        }
-
-        function dealerLogout() {
-            location.reload();
-        }
-
-        function createCustomer() {
-            let user = document.getElementById('custName').value.trim();
-            let pass = document.getElementById('custPass').value.trim();
-            let bal = parseFloat(document.getElementById('custBal').value) || 0;
-
-            if(!user || !pass) { alert('Fill all fields!'); return; }
-            if(bal > currentDealer.balance) { alert('Aap ke paas itna balance nahi hai!'); return; }
-
-            let users = JSON.parse(localStorage.getItem('bhai_users') || '[]');
-            if(users.some(u => u.username === user)) { alert('Username already exists!'); return; }
-
-            // Deduct balance from Dealer
-            currentDealer.balance -= bal;
-            let dealers = JSON.parse(localStorage.getItem('bhai_dealers') || '[]');
-            let dIndex = dealers.findIndex(d => d.username === currentDealer.username);
-            if(dIndex !== -1) dealers[dIndex].balance = currentDealer.balance;
-            localStorage.setItem('bhai_dealers', JSON.stringify(dealers));
-
-            // Create Customer
-            users.push({ username: user, password: pass, balance: bal, createdBy: currentDealer.username });
-            localStorage.setItem('bhai_users', JSON.stringify(users));
-
-            document.getElementById('dealerCredit').innerText = currentDealer.balance;
-            renderCustomers();
-            alert(`Customer '${user}' created successfully!`);
-        }
-
-        function renderCustomers() {
-            let users = JSON.parse(localStorage.getItem('bhai_users') || '[]');
-            let myUsers = users.filter(u => u.createdBy === currentDealer.username);
-            let tbody = document.getElementById('customerTableBody');
-            tbody.innerHTML = '';
-            myUsers.forEach(u => {
-                tbody.innerHTML += `<tr><td><strong>${u.username}</strong></td><td style="color:#2ed573;">Rs. ${u.balance}</td><td>${u.password}</td></tr>`;
-            });
-        }
-    </script>
-</body>
-</html>
+        <!-- Active Users List -->
+        <div class="card">
+            <div class="card-title">
