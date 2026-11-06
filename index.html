@@ -3,562 +3,197 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bhai Live - Sports Betting Platform</title>
+    <title>King Cricket - Bhai Live</title>
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
-        body {
-            background-color: #121826;
-            color: #ffffff;
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-        }
-
-        /* Top Header */
-        header {
-            background-color: #1a2332;
-            padding: 10px 15px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 2px solid #2a364f;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-
-        .logo {
-            font-size: 1.2rem;
-            font-weight: bold;
-            color: #ffb703;
-        }
-
-        .header-right {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        /* Balance Box Near Menu */
-        .balance-box {
-            background: #243044;
-            border: 1px solid #ffb703;
-            padding: 5px 10px;
-            border-radius: 4px;
-            font-size: 0.85rem;
-            color: #2ed573;
-            font-weight: bold;
-        }
-
-        .menu-btn {
-            font-size: 1.5rem;
-            cursor: pointer;
-            background: none;
-            border: none;
-            color: white;
-        }
-
-        /* Navigation Tabs */
-        .tabs-container {
-            display: flex;
-            background-color: #1a2332;
-            border-bottom: 1px solid #2a364f;
-        }
-
-        .tab-btn {
-            flex: 1;
-            padding: 12px;
-            text-align: center;
-            background: none;
-            border: none;
-            color: #a0aec0;
-            font-size: 0.95rem;
-            font-weight: bold;
-            cursor: pointer;
-            border-bottom: 3px solid transparent;
-            transition: 0.3s;
-        }
-
-        .tab-btn.active {
-            color: #ffb703;
-            border-bottom: 3px solid #ffb703;
-            background-color: #243044;
-        }
-
-        .content {
-            padding: 10px;
-            flex: 1;
-        }
-
-        .tab-content {
-            display: none;
-        }
-
-        .tab-content.active {
-            display: block;
-        }
-
-        /* Match Card Style */
-        .match-card {
-            background: #1a2332;
-            border-radius: 6px;
-            padding: 12px;
-            margin-bottom: 10px;
-            border: 1px solid #2a364f;
-            cursor: pointer;
-        }
-
-        .match-title-bar {
-            font-size: 0.9rem;
-            font-weight: bold;
-            color: #ffffff;
-            margin-bottom: 8px;
-            background: #243044;
-            padding: 6px 10px;
-            border-radius: 4px;
-        }
-
-        .odds-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 5px;
-            text-align: center;
-        }
-
-        .odd-box {
-            padding: 6px;
-            border-radius: 4px;
-            font-size: 0.85rem;
-            font-weight: bold;
-        }
-
-        .back-box {
-            background-color: #74b9ff;
-            color: #000;
-        }
-
-        .lay-box {
-            background-color: #ff7675;
-            color: #000;
-        }
-
-        /* Sidebar & WhatsApp Channel */
-        .sidebar {
-            position: fixed;
-            top: 0; right: -260px;
-            width: 260px; height: 100%;
-            background-color: #1a2332;
-            box-shadow: -5px 0 15px rgba(0,0,0,0.5);
-            transition: 0.3s ease;
-            z-index: 1000;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-        }
-        .sidebar.active { right: 0; }
-        .close-btn { align-self: flex-end; font-size: 1.5rem; background: none; border: none; color: #ff4757; cursor: pointer; margin-bottom: 15px; }
-        .sidebar-menu { list-style: none; }
-        .sidebar-menu li { padding: 10px; margin-bottom: 8px; background: #243044; border-radius: 4px; cursor: pointer; font-size: 0.9rem; }
-        .sidebar-menu li a { color: white; text-decoration: none; display: block; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
+        body { background-color: #0d1117; color: #ffffff; padding: 10px; }
+        .header { display: flex; justify-content: space-between; align-items: center; background: #161b22; padding: 12px 15px; border-bottom: 2px solid #2ed573; border-radius: 6px; }
+        .user-info { font-size: 0.9rem; color: #ffb703; }
+        .logout-btn { background: #ff4757; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: bold; }
         
-        .whatsapp-link-btn {
-            background: #2ed573 !important;
-            color: black !important;
-            font-weight: bold;
-            text-align: center;
-        }
-        .logout-btn { margin-top: auto; background: #ff4757 !important; color: white; text-align: center; font-weight: bold; }
-
-        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); display: none; z-index: 999; }
-        .overlay.active { display: block; }
-
-        /* Detailed Match View */
-        .match-detail-view {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: #121826;
-            z-index: 2000;
-            overflow-y: auto;
-            padding: 10px;
-        }
-        .match-detail-view.active { display: block; }
-
-        .detail-header {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 12px;
-            background: #1a2332;
-            padding: 10px;
-            border-radius: 6px;
-        }
-
-        .back-btn { background: #243044; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; }
-
-        .section-header {
-            background: #243044;
-            color: #ffb703;
-            padding: 6px 10px;
-            font-size: 0.9rem;
-            font-weight: bold;
-            margin-bottom: 5px;
-            border-radius: 4px;
-        }
-
-        .table-header-row {
-            display: flex;
-            justify-content: space-between;
-            background: #1a2332;
-            padding: 8px;
-            font-size: 0.8rem;
-            color: #a0aec0;
-            border-bottom: 1px solid #2a364f;
-        }
-
-        .runner-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: #1a2332;
-            padding: 8px;
-            border-bottom: 1px solid #2a364f;
-        }
-
-        .odds-grid-2 {
-            display: grid;
-            grid-template-columns: 70px 70px;
-            gap: 4px;
-            text-align: center;
-        }
-
-        .odd-cell {
-            padding: 6px 4px;
-            border-radius: 4px;
-            font-weight: bold;
-            font-size: 0.9rem;
-            cursor: pointer;
-        }
-        .odd-cell span { display: block; font-size: 0.7rem; color: #121826; font-weight: normal; }
-
-        .back-blue { background-color: #74b9ff; color: #000; }
-        .lay-pink { background-color: #ff7675; color: #000; }
-        .not-pink { background-color: #ff7675; color: #000; }
-        .yes-blue { background-color: #74b9ff; color: #000; }
-
-        /* Modals */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 50%; left: 50%;
-            transform: translate(-50%, -50%);
-            background: #1a2332; padding: 20px;
-            border-radius: 8px; border: 1px solid #ffb703;
-            z-index: 3000; width: 90%; max-width: 380px;
-        }
-        .modal.active { display: block; }
-        .modal input { width: 100%; padding: 10px; margin: 10px 0; background: #243044; border: 1px solid #2a364f; color: white; border-radius: 4px; }
-        .modal-btn { background: #ffb703; color: black; border: none; padding: 10px; width: 100%; border-radius: 4px; font-weight: bold; cursor: pointer; }
+        .login-box { max-width: 350px; margin: 60px auto; background: #161b22; padding: 25px; border-radius: 8px; border: 1px solid #30363d; text-align: center; }
+        .login-box input { width: 100%; padding: 10px; margin: 8px 0; background: #0d1117; border: 1px solid #30363d; color: white; border-radius: 4px; }
+        .login-box button { width: 100%; padding: 10px; background: #2ed573; color: black; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; margin-top: 10px; }
+        
+        .tab-menu { display: flex; gap: 10px; margin: 15px 0; border-bottom: 1px solid #30363d; padding-bottom: 5px; }
+        .tab-btn { background: #161b22; border: 1px solid #30363d; color: white; padding: 8px 16px; border-radius: 5px; cursor: pointer; font-weight: bold; }
+        .tab-btn.active { background: #2ed573; color: black; border-color: #2ed573; }
+        
+        .match-card { background: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 15px; margin-bottom: 12px; }
+        .match-header { display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 10px; }
+        .status-live { color: #ff4757; font-weight: bold; animation: blink 1.5s infinite; }
+        .status-upcoming { color: #ffb703; font-weight: bold; }
+        @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
+        
+        .teams { font-size: 1.1rem; font-weight: bold; margin-bottom: 10px; color: #2ed573; }
+        .odds-container { display: flex; gap: 10px; }
+        .odds-btn { flex: 1; background: #21262d; border: 1px solid #30363d; padding: 8px; border-radius: 5px; text-align: center; cursor: pointer; }
+        .odds-btn:hover { border-color: #2ed573; }
+        .odds-val { font-size: 1rem; font-weight: bold; color: #2ed573; }
     </style>
 </head>
 <body>
 
-    <!-- Header -->
-    <header>
-        <div class="logo">BHAI LIVE</div>
-        <div class="header-right">
-            <div class="balance-box" id="userBalanceDisplay">Rs. 15,000</div>
-            <button class="menu-btn" onclick="toggleSidebar()">&#9776;</button>
-        </div>
-    </header>
-
-    <!-- Tabs -->
-    <div class="tabs-container">
-        <button class="tab-btn active" id="tabLiveBtn" onclick="switchTab('live')">🔴 Live Matches</button>
-        <button class="tab-btn" id="tabCricketBtn" onclick="switchTab('cricket')">🏏 Cricket (7 Days)</button>
+    <!-- LOGIN SCREEN -->
+    <div id="loginScreen" class="login-box">
+        <h2 style="color:#2ed573; margin-bottom:15px;">🏏 King Cricket Login</h2>
+        <input type="text" id="cUser" placeholder="Client Username">
+        <input type="password" id="cPass" placeholder="Password">
+        <button onclick="clientLogin()">Login to Play</button>
     </div>
 
-    <!-- Content Area -->
-    <div class="content">
-        <div id="liveTab" class="tab-content active">
-            <div id="liveMatchesList">
-                <p style="text-align: center; color: #8a99ad; padding: 30px;">Checking live matches...</p>
+    <!-- MAIN DASHBOARD -->
+    <div id="mainDashboard" style="display: none;">
+        <div class="header">
+            <div>
+                <h3 style="color:#2ed573;">👑 King Cricket</h3>
+                <div class="user-info">User: <span id="displayUsername"></span> | Bal: Rs. <span id="displayBalance">0</span></div>
             </div>
+            <!-- LOGOUT BUTTON -->
+            <button class="logout-btn" onclick="clientLogout()">Logout</button>
         </div>
 
-        <div id="cricketTab" class="tab-content">
-            <div id="upcomingCricketList">
-                <p style="text-align: center; color: #8a99ad; padding: 30px;">Loading fixtures...</p>
-            </div>
-        </div>
-    </div>
-
-    <!-- Sidebar Menu with WhatsApp Channel -->
-    <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
-    <div class="sidebar" id="sidebar">
-        <button class="close-btn" onclick="toggleSidebar()">&times;</button>
-        <ul class="sidebar-menu">
-            <li class="whatsapp-link-btn">
-                <a href="https://whatsapp.com/channel/0029VbDmOAh59PwW67alEp38" target="_blank" style="color: black; font-weight: bold;">📢 Join WhatsApp Channel</a>
-            </li>
-            <li onclick="openModal('passwordModal')">🔒 Change Password</li>
-            <li onclick="openModal('historyModal')">📜 Bet History</li>
-            <li class="logout-btn" onclick="logout()">🚪 Logout</li>
-        </ul>
-    </div>
-
-    <!-- Match Detail View -->
-    <div class="match-detail-view" id="matchDetailView">
-        <div class="detail-header">
-            <button class="back-btn" onclick="closeDetailView()">&larr; Back</button>
-            <h3 id="detailTitle" style="font-size: 1rem; color: #ffb703;">Match Details</h3>
+        <div class="tab-menu">
+            <button class="tab-btn active" onclick="showMatches('live')">🔴 Live Matches</button>
+            <button class="tab-btn" onclick="showMatches('upcoming')">📅 Upcoming Matches</button>
         </div>
 
-        <div class="table-header-row">
-            <span>Match Odds</span>
-            <span style="color: #ffb703;">Limit Min: 500 / Max: 300,000</span>
+        <div id="matchesContainer">
+            <!-- Dynamic Matches Loaded Here -->
         </div>
-
-        <!-- Match Odds Table -->
-        <div style="background: #1a2332; margin-bottom: 15px;">
-            <div style="display: flex; justify-content: space-between; background: #243044; padding: 6px 10px; font-size: 0.8rem; font-weight: bold;">
-                <span>RUNNER</span>
-                <div style="display: flex; gap: 40px;">
-                    <span style="color: #74b9ff;">BACK</span>
-                    <span style="color: #ff7675;">LAY</span>
-                </div>
-            </div>
-            
-            <div class="runner-row">
-                <div>
-                    <strong id="team1Name">Team A</strong>
-                    <div style="font-size: 0.75rem; color: #2ed573;">0</div>
-                </div>
-                <div class="odds-grid-2">
-                    <div class="odd-cell back-blue" id="t1Back">1.82<span>150k</span></div>
-                    <div class="odd-cell lay-pink" id="t1Lay">1.85<span>200k</span></div>
-                </div>
-            </div>
-
-            <div class="runner-row">
-                <div>
-                    <strong id="team2Name">Team B</strong>
-                    <div style="font-size: 0.75rem; color: #2ed573;">0</div>
-                </div>
-                <div class="odds-grid-2">
-                    <div class="odd-cell back-blue" id="t2Back">2.15<span>120k</span></div>
-                    <div class="odd-cell lay-pink" id="t2Lay">2.20<span>180k</span></div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Fancy Section -->
-        <div class="section-header">📊 FANCY MARKET</div>
-        <div style="background: #1a2332;" id="fancyContainer">
-            <!-- Dynamic Fancies injected here -->
-        </div>
-    </div>
-
-    <!-- Password Modal -->
-    <div class="modal" id="passwordModal">
-        <h3>Change Password</h3>
-        <input type="password" placeholder="Old Password">
-        <input type="password" placeholder="New Password">
-        <button class="modal-btn" onclick="closeModal('passwordModal')">Update Password</button>
-    </div>
-
-    <!-- History Modal -->
-    <div class="modal" id="historyModal">
-        <h3>Bet History</h3>
-        <p style="font-size: 0.85rem; color: #a0aec0; margin: 10px 0;">No bets placed yet.</p>
-        <button class="modal-btn" onclick="closeModal('historyModal')">Close</button>
     </div>
 
     <script>
-        window.onload = function() {
-            let currentUser = localStorage.getItem('bhai_logged_user') || 'Bhatti_User1';
-            let users = JSON.parse(localStorage.getItem('bhai_users') || '[]');
-            let found = users.find(u => u.username === currentUser);
-            if(found) {
-                document.getElementById('userBalanceDisplay').innerText = 'Rs. ' + found.balance;
-            } else {
-                document.getElementById('userBalanceDisplay').innerText = 'Rs. 15,000';
-            }
-            
-            fetchRealTimeMatches();
-            fetchUpcomingMatches();
+        let currentClient = null;
 
-            // Auto-refresh live matches every 30 seconds
-            setInterval(fetchRealTimeMatches, 30000);
+        // Sample Matches Data with correct statuses
+        const matchesData = [
+            { id: 1, teamA: "Pakistan", teamB: "India", type: "live", statusText: "LIVE 15.4 Overs", oddsA: "1.85", oddsB: "2.10" },
+            { id: 2, teamA: "Australia", teamB: "England", type: "live", statusText: "LIVE Inning Break", oddsA: "1.90", oddsB: "1.90" },
+            { id: 3, teamA: "South Africa", teamB: "New Zealand", type: "upcoming", statusText: "Starts Today 7:00 PM", oddsA: "1.75", oddsB: "2.20" }
+        ];
+
+        // CHECK IF ALREADY LOGGED IN
+        window.onload = function() {
+            let session = JSON.parse(sessionStorage.getItem('bhai_active_client'));
+            if(session) {
+                currentClient = session;
+                loadDashboard();
+            }
         };
 
-        function toggleSidebar() {
-            document.getElementById('sidebar').classList.toggle('active');
-            document.getElementById('overlay').classList.toggle('active');
-        }
+        function clientLogin() {
+            let u = document.getElementById('cUser').value.trim();
+            let p = document.getElementById('cPass').value.trim();
 
-        function switchTab(tabName) {
-            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            let users = JSON.parse(localStorage.getItem('bhai_users') || '[]');
+            let found = users.find(x => x.username === u && x.password === p);
 
-            if(tabName === 'live') {
-                document.getElementById('tabLiveBtn').classList.add('active');
-                document.getElementById('liveTab').classList.add('active');
+            if(found) {
+                currentClient = found;
+                sessionStorage.setItem('bhai_active_client', JSON.stringify(found));
+                loadDashboard();
             } else {
-                document.getElementById('tabCricketBtn').classList.add('active');
-                document.getElementById('cricketTab').classList.add('active');
+                alert('Ghalat Username ya Password!');
             }
         }
 
-        async function fetchRealTimeMatches() {
-            try {
-                let res = await fetch('https://api.cricapi.com/v1/currentMatches?apikey=PwD74O2768.432&offset=0');
-                let data = await res.json();
-                
-                let container = document.getElementById('liveMatchesList');
-                
-                if (data && data.data && data.data.length > 0) {
-                    let html = '';
-                    data.data.forEach((m, index) => {
-                        let parts = m.name.split(' v ');
-                        let t1 = parts[0] ? parts[0].trim() : 'Team A';
-                        let t2 = parts[1] ? parts[1].trim() : 'Team B';
-                        
-                        let r1 = (1.60 + (index * 0.12)).toFixed(2);
-                        let r2 = (2.10 + (index * 0.15)).toFixed(2);
+        function clientLogout() {
+            sessionStorage.removeItem('bhai_active_client');
+            currentClient = null;
+            document.getElementById('mainDashboard').style.display = 'none';
+            document.getElementById('loginScreen').style.display = 'block';
+            document.getElementById('cUser').value = '';
+            document.getElementById('cPass').value = '';
+        }
 
-                        let safeName = m.name.replace(/'/g, "\\'");
-                        let safeT1 = t1.replace(/'/g, "\\'");
-                        let safeT2 = t2.replace(/'/g, "\\'");
+        function loadDashboard() {
+            document.getElementById('loginScreen').style.display = 'none';
+            document.getElementById('mainDashboard').style.display = 'block';
+            document.getElementById('displayUsername').innerText = currentClient.username;
+            
+            // Sync Fresh Balance from localStorage
+            let users = JSON.parse(localStorage.getItem('bhai_users') || '[]');
+            let fresh = users.find(x => x.username === currentClient.username);
+            if(fresh) {
+                document.getElementById('displayBalance').innerText = fresh.balance;
+            }
 
-                        html += `
-                            <div class="match-card" onclick="openMatchDetail('${safeT1}', '${safeT2}', '${safeName}', '${r1}', '${r2}', ${index})">
-                                <div class="match-title-bar">🏏 ${m.name} &bull; <span style="color:#ffb703;">${m.status}</span></div>
-                                <div class="odds-row">
-                                    <div class="odd-box back-box">${r1} / ${(parseFloat(r1)+0.03).toFixed(2)}</div>
-                                    <div class="odd-box" style="background:#243044; color:#2ed573; font-size:0.75rem;">LIVE ODDS</div>
-                                    <div class="odd-box lay-box">${r2} / ${(parseFloat(r2)+0.05).toFixed(2)}</div>
-                                </div>
+            showMatches('live');
+        }
+
+        function showMatches(filterType) {
+            let tabs = document.querySelectorAll('.tab-btn');
+            tabs.forEach(t => t.classList.remove('active'));
+            
+            if(filterType === 'live') tabs[0].classList.add('active');
+            else tabs[1].classList.add('active');
+
+            let container = document.getElementById('matchesContainer');
+            container.innerHTML = '';
+
+            let filtered = matchesData.filter(m => m.type === filterType);
+
+            if(filtered.length === 0) {
+                container.innerHTML = `<div style="text-align:center; padding:30px; color:#8b949e;">No matches available right now.</div>`;
+                return;
+            }
+
+            filtered.forEach(m => {
+                let badgeClass = m.type === 'live' ? 'status-live' : 'status-upcoming';
+                container.innerHTML += `
+                    <div class="match-card">
+                        <div class="match-header">
+                            <span>T20 World Match</span>
+                            <span class="${badgeClass}">${m.statusText}</span>
+                        </div>
+                        <div class="teams">${m.teamA} vs ${m.teamB}</div>
+                        <div class="odds-container">
+                            <div class="odds-btn" onclick="placeBet('${m.teamA}', ${m.oddsA})">
+                                <div style="font-size:0.8rem; color:#8b949e;">${m.teamA}</div>
+                                <div class="odds-val">${m.oddsA}</div>
                             </div>
-                        `;
-                    });
-                    container.innerHTML = html;
-                } else {
-                    container.innerHTML = '<div style="text-align: center; padding: 40px; color: #ffb703;"><h3>No Match Live</h3></div>';
-                }
-            } catch (err) {
-                // Keep silent on network blips during background auto-refresh
-            }
-        }
-
-        function fetchUpcomingMatches() {
-            const upcoming = [
-                { match: "Bangladesh v West Indies", date: "11/5/2026 8:30:00 AM", odds: ["4.5", "4.6", "1.85", "1.88"] },
-                { match: "Melbourne Stars W v Sydney Sixers W", date: "11/6/2026 1:10:00 PM", odds: ["2.36", "2.4", "1.72", "1.74"] },
-                { match: "Sudurpaschim Royals v Karnali Yaks", date: "11/6/2026 11:45:00 AM", odds: ["1.84", "2.12", "1.89", "2.2"] },
-                { match: "Chitwan Rhinos v Pokhara Avengers", date: "11/6/2026 4:15:00 PM", odds: ["1.6", "1.8", "2.24", "2.64"] },
-                { match: "Afghanistan v Zimbabwe", date: "11/5/2026 10:00:00 PM", odds: ["5.6", "5.8", "1.8", "1.81"] }
-            ];
-
-            let html = '';
-            upcoming.forEach((item, index) => {
-                let parts = item.match.split(' v ');
-                let t1 = parts[0] ? parts[0].trim() : 'Team A';
-                let t2 = parts[1] ? parts[1].trim() : 'Team B';
-
-                let safeMatch = item.match.replace(/'/g, "\\'");
-                let safeT1 = t1.replace(/'/g, "\\'");
-                let safeT2 = t2.replace(/'/g, "\\'");
-
-                html += `
-                    <div class="match-card" onclick="openMatchDetail('${safeT1}', '${safeT2}', '${safeMatch}', '${item.odds[0]}', '${item.odds[2]}', ${index + 10})">
-                        <div class="match-title-bar">Cricket > ${item.match} <span style="font-size:0.75rem; color:#a0aec0;">${item.date}</span></div>
-                        <div class="odds-row">
-                            <div class="odd-box back-box">${item.odds[0]} / ${item.odds[1]}</div>
-                            <div class="odd-box" style="background:#243044; color:#2ed573; font-size:0.75rem;">UPCOMING</div>
-                            <div class="odd-box lay-box">${item.odds[2]} / ${item.odds[3]}</div>
+                            <div class="odds-btn" onclick="placeBet('${m.teamB}', ${m.oddsB})">
+                                <div style="font-size:0.8rem; color:#8b949e;">${m.teamB}</div>
+                                <div class="odds-val">${m.oddsB}</div>
+                            </div>
                         </div>
                     </div>
                 `;
             });
-            document.getElementById('upcomingCricketList').innerHTML = html;
         }
 
-        function openMatchDetail(t1, t2, fullName, odd1, odd2, seed) {
-            document.getElementById('detailTitle').innerText = fullName;
-            document.getElementById('team1Name').innerText = t1;
-            document.getElementById('team2Name').innerText = t2;
-            
-            document.getElementById('t1Back').innerHTML = `${odd1}<span>150k</span>`;
-            document.getElementById('t1Lay').innerHTML = `${(parseFloat(odd1)+0.03).toFixed(2)}<span>200k</span>`;
-            document.getElementById('t2Back').innerHTML = `${odd2}<span>120k</span>`;
-            document.getElementById('t2Lay').innerHTML = `${(parseFloat(odd2)+0.05).toFixed(2)}<span>180k</span>`;
+        function placeBet(teamName, odds) {
+            let amount = prompt(`Enter bet amount for ${teamName} (Odds: ${odds}):`);
+            if(!amount || isNaN(amount) || amount <= 0) return;
+            amount = parseFloat(amount);
 
-            let f1Score = 45 + (seed * 4) % 25;
-            let f2Score = 15 + (seed * 3) % 15;
-            let f3Score = 175 + (seed * 10) % 60;
+            let users = JSON.parse(localStorage.getItem('bhai_users') || '[]');
+            let uIdx = users.findIndex(x => x.username === currentClient.username);
 
-            let fancyHtml = `
-                <div style="display: flex; justify-content: space-between; background: #243044; padding: 6px 10px; font-size: 0.8rem; font-weight: bold;">
-                    <span>SELECTION</span>
-                    <div style="display: flex; gap: 45px;">
-                        <span style="color: #ff7675;">NOT</span>
-                        <span style="color: #74b9ff;">YES</span>
-                    </div>
-                </div>
+            if(uIdx !== -1) {
+                if(users[uIdx].balance < amount) {
+                    alert('Balance kam hai!');
+                    return;
+                }
 
-                <div class="runner-row">
-                    <span style="font-size: 0.85rem;">1st Innings 6 Over Runs (${t1})</span>
-                    <div class="odds-grid-2">
-                        <div class="odd-cell not-pink">${f1Score}<span style="color:#000;">100</span></div>
-                        <div class="odd-cell yes-blue">${f1Score + 1}<span style="color:#000;">100</span></div>
-                    </div>
-                </div>
+                users[uIdx].balance -= amount;
+                localStorage.setItem('bhai_users', JSON.stringify(users));
+                document.getElementById('displayBalance').innerText = users[uIdx].balance;
 
-                <div class="runner-row">
-                    <span style="font-size: 0.85rem;">Fall of 1st Wicket (${t2})</span>
-                    <div class="odds-grid-2">
-                        <div class="odd-cell not-pink">${f2Score}<span style="color:#000;">100</span></div>
-                        <div class="odd-cell yes-blue">${f2Score + 1}<span style="color:#000;">100</span></div>
-                    </div>
-                </div>
+                // Save Bet History for Dealer to see
+                let bets = JSON.parse(localStorage.getItem('bhai_bets') || '[]');
+                bets.push({
+                    username: currentClient.username,
+                    match: `${teamName} (Odds: ${odds})`,
+                    amount: amount,
+                    status: 'Active',
+                    date: new Date().toLocaleString()
+                });
+                localStorage.setItem('bhai_bets', JSON.stringify(bets));
 
-                <div class="runner-row">
-                    <span style="font-size: 0.85rem;">Total Match Projected Score</span>
-                    <div class="odds-grid-2">
-                        <div class="odd-cell not-pink">${f3Score}<span style="color:#000;">100</span></div>
-                        <div class="odd-cell yes-blue">${f3Score + 1}<span style="color:#000;">100</span></div>
-                    </div>
-                </div>
-            `;
-
-            document.getElementById('fancyContainer').innerHTML = fancyHtml;
-            document.getElementById('matchDetailView').classList.add('active');
-        }
-
-        function closeDetailView() {
-            document.getElementById('matchDetailView').classList.remove('active');
-        }
-
-        function openModal(id) {
-            toggleSidebar();
-            document.getElementById(id).classList.add('active');
-        }
-
-        function closeModal(id) {
-            document.getElementById(id).classList.remove('active');
-        }
-
-        function logout() {
-            localStorage.removeItem('bhai_logged_user');
-            alert('Aap logout ho chuke hain!');
-            location.reload();
+                alert(`Bet of Rs. ${amount} placed on ${teamName}!`);
+            }
         }
     </script>
 </body>
