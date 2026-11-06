@@ -3,29 +3,50 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>King Cricket - Live Match Feed</title>
+    <title>King Cricket - Live Real Matches</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
         body { background-color: #0d1117; color: #ffffff; padding: 10px; }
-        .header { display: flex; justify-content: space-between; align-items: center; background: #161b22; padding: 12px 15px; border-bottom: 2px solid #2ed573; border-radius: 6px; }
-        .user-info { font-size: 0.9rem; color: #ffb703; }
+        
+        /* Header */
+        .header { display: flex; justify-content: space-between; align-items: center; background: #161b22; padding: 12px 15px; border-bottom: 2px solid #2ed573; border-radius: 6px; margin-bottom: 15px; }
+        .user-info { font-size: 0.9rem; color: #ffb703; font-weight: bold; }
         .logout-btn { background: #ff4757; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: bold; }
         
+        /* Login Box */
         .login-box { max-width: 350px; margin: 60px auto; background: #161b22; padding: 25px; border-radius: 8px; border: 1px solid #30363d; text-align: center; }
         .login-box input { width: 100%; padding: 10px; margin: 8px 0; background: #0d1117; border: 1px solid #30363d; color: white; border-radius: 4px; }
         .login-box button { width: 100%; padding: 10px; background: #2ed573; color: black; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; margin-top: 10px; }
         
-        .match-card { background: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 15px; margin-bottom: 12px; }
-        .match-header { display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 10px; color: #ff4757; font-weight: bold; }
-        .teams { font-size: 1.1rem; font-weight: bold; margin-bottom: 10px; color: #2ed573; }
-        .match-status { font-size: 0.9rem; color: #ffb703; margin-bottom: 10px; }
+        /* Match Card List View */
+        .match-card { background: #161b22; border: 1px solid #2ed573; border-radius: 8px; padding: 15px; margin-bottom: 15px; cursor: pointer; transition: 0.2s; }
+        .match-card:hover { background: #1f242d; }
+        .match-type { font-size: 0.75rem; color: #8b949e; text-transform: uppercase; }
+        .status-live { color: #ff4757; font-weight: bold; animation: blink 1.5s infinite; }
+        @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
+        .teams-title { font-size: 1.1rem; font-weight: bold; color: #ffffff; margin: 8px 0; }
+        .click-hint { font-size: 0.8rem; color: #2ed573; text-align: right; margin-top: 5px; }
+
+        /* Full Match Detail Page View */
+        #matchDetailPage { display: none; }
+        .back-btn { background: #21262d; border: 1px solid #30363d; color: white; padding: 6px 12px; border-radius: 4px; cursor: pointer; margin-bottom: 12px; font-weight: bold; }
+        .score-box { background: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 15px; margin-bottom: 15px; text-align: center; }
+        .score-title { color: #2ed573; font-size: 1.2rem; font-weight: bold; margin-bottom: 5px; }
+        .score-desc { font-size: 0.95rem; color: #ffb703; }
         
-        .odds-container { display: flex; gap: 10px; margin-top: 10px; }
+        /* Odds Section */
+        .section-header { font-size: 1rem; color: #ffb703; font-weight: bold; margin: 15px 0 8px 0; border-bottom: 1px solid #30363d; padding-bottom: 5px; }
+        .odds-container { display: flex; gap: 10px; margin-bottom: 15px; }
         .odds-btn { flex: 1; background: #21262d; border: 1px solid #30363d; padding: 10px; border-radius: 5px; text-align: center; cursor: pointer; }
         .odds-btn:hover { border-color: #2ed573; }
-        .odds-val { font-size: 1.1rem; font-weight: bold; color: #2ed573; }
+        .odds-val { font-size: 1.1rem; font-weight: bold; color: #2ed573; margin-top: 3px; }
 
-        .loading-text { text-align: center; padding: 30px; color: #8b949e; font-size: 1rem; }
+        /* Fancy Section */
+        .fancy-card { background: #161b22; border: 1px solid #30363d; border-radius: 6px; padding: 10px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+        .fancy-name { font-size: 0.9rem; font-weight: bold; }
+        .fancy-rates { display: flex; gap: 8px; }
+        .rate-box { background: #21262d; border: 1px solid #30363d; padding: 6px 12px; border-radius: 4px; text-align: center; cursor: pointer; font-size: 0.85rem; }
+        .rate-box span { display: block; font-weight: bold; color: #2ed573; }
     </style>
 </head>
 <body>
@@ -38,26 +59,55 @@
         <button onclick="clientLogin()">Login to Play</button>
     </div>
 
-    <!-- MAIN DASHBOARD -->
+    <!-- MAIN APP WRAPPER -->
     <div id="mainDashboard" style="display: none;">
+        
+        <!-- TOP HEADER WITH BALANCE -->
         <div class="header">
             <div>
-                <h3 style="color:#2ed573;">👑 King Cricket (Live API)</h3>
-                <div class="user-info">User: <span id="displayUsername"></span> | Bal: Rs. <span id="displayBalance">0</span></div>
+                <h3 style="color:#2ed573;">👑 King Cricket</h3>
+                <div class="user-info">Account: <span id="displayUsername"></span> | Bal: Rs. <span id="displayBalance">0</span></div>
             </div>
             <button class="logout-btn" onclick="clientLogout()">Logout</button>
         </div>
 
-        <div style="margin: 15px 0; font-weight: bold; color: #ffb703;">🔴 Real-Time Cricket Data (CricketData.org Live)</div>
-        
-        <div id="apiMatchesContainer">
-            <div class="loading-text">Fetching Live Matches from API...</div>
+        <!-- LIST VIEW OF LIVE MATCHES -->
+        <div id="matchesListView">
+            <div style="font-weight: bold; color: #ffb703; margin-bottom: 10px;">🔴 Real Live Matches (Select to Play)</div>
+            <div id="apiMatchesContainer">
+                <div style="text-align:center; padding:30px; color:#8b949e;">Fetching Real Live Matches...</div>
+            </div>
         </div>
+
+        <!-- FULL MATCH DETAIL PAGE -->
+        <div id="matchDetailPage">
+            <button class="back-btn" onclick="backToList()">⬅ Back to All Matches</button>
+
+            <!-- 1. LIVE SCORE -->
+            <div class="score-box">
+                <div class="score-title" id="detailMatchTitle">Loading...</div>
+                <div class="score-desc" id="detailMatchStatus">Fetching score...</div>
+            </div>
+
+            <!-- 2. MATCH RATES / ODDS -->
+            <div class="section-header">📈 Match Rates / Winner Odds</div>
+            <div class="odds-container" id="detailOddsContainer">
+                <!-- Odds Buttons Loaded Dynamically -->
+            </div>
+
+            <!-- 3. FANCIES SECTION -->
+            <div class="section-header">⚡ Live Fancies (Session / Wickets)</div>
+            <div id="detailFancyContainer">
+                <!-- Fancies Loaded Dynamically -->
+            </div>
+        </div>
+
     </div>
 
     <script>
         const API_KEY = "PwD74O2768.432";
         let currentClient = null;
+        let fetchedMatches = [];
 
         window.onload = function() {
             let session = JSON.parse(sessionStorage.getItem('bhai_active_client'));
@@ -97,64 +147,120 @@
             document.getElementById('mainDashboard').style.display = 'block';
             document.getElementById('displayUsername').innerText = currentClient.username;
             
+            updateBalanceDisplay();
+            fetchLiveCricketData();
+            setInterval(fetchLiveCricketData, 15000); // 15 sec auto-update
+        }
+
+        function updateBalanceDisplay() {
             let users = JSON.parse(localStorage.getItem('bhai_users') || '[]');
             let fresh = users.find(x => x.username === currentClient.username);
             if(fresh) {
                 document.getElementById('displayBalance').innerText = fresh.balance;
             }
-
-            fetchLiveCricketData();
-            // Refreshes real-time score every 15 seconds
-            setInterval(fetchLiveCricketData, 15000);
         }
 
+        // Fetch API with CORS Proxy to guarantee real API fetch
         async function fetchLiveCricketData() {
             let container = document.getElementById('apiMatchesContainer');
-            let url = `https://api.cricketdata.org/v1/currentMatches?apikey=${API_KEY}&offset=0`;
+            let targetUrl = `https://api.cricketdata.org/v1/currentMatches?apikey=${API_KEY}&offset=0`;
+            // Using CORS Proxy to bypass browser security restrictions
+            let proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(targetUrl)}`;
 
             try {
-                let response = await fetch(url);
-                let result = await response.json();
+                let response = await fetch(proxyUrl);
+                let proxyData = await response.json();
+                let result = JSON.parse(proxyData.contents);
 
                 if (result && result.data && result.data.length > 0) {
+                    fetchedMatches = result.data;
                     container.innerHTML = '';
-                    result.data.forEach(match => {
+
+                    result.data.forEach((match, index) => {
                         let isLive = match.matchStarted && !match.matchEnded;
-                        let statusBadge = isLive ? '🔴 LIVE NOW' : (match.matchEnded ? '🏁 FINISHED' : '📅 UPCOMING');
+                        let statusText = isLive ? '🔴 LIVE NOW' : (match.matchEnded ? '🏁 FINISHED' : '📅 UPCOMING');
 
                         container.innerHTML += `
-                            <div class="match-card">
-                                <div class="match-header">
-                                    <span>${match.matchType ? match.matchType.toUpperCase() : 'CRICKET MATCH'}</span>
-                                    <span>${statusBadge}</span>
+                            <div class="match-card" onclick="openMatchDetail(${index})">
+                                <div style="display:flex; justify-content:space-between;">
+                                    <span class="match-type">${match.matchType ? match.matchType.toUpperCase() : 'CRICKET'}</span>
+                                    <span class="${isLive ? 'status-live' : ''}">${statusText}</span>
                                 </div>
-                                <div class="teams">${match.name}</div>
-                                <div class="match-status">${match.status || 'Match info updating...'}</div>
-                                
-                                <div class="odds-container">
-                                    <div class="odds-btn" onclick="placeBet('${match.teams[0]}', 1.90)">
-                                        <div style="font-size:0.8rem; color:#8b949e;">${match.teams[0] || 'Team 1'}</div>
-                                        <div class="odds-val">1.90</div>
-                                    </div>
-                                    <div class="odds-btn" onclick="placeBet('${match.teams[1]}', 1.90)">
-                                        <div style="font-size:0.8rem; color:#8b949e;">${match.teams[1] || 'Team 2'}</div>
-                                        <div class="odds-val">1.90</div>
-                                    </div>
-                                </div>
+                                <div class="teams-title">${match.name}</div>
+                                <div style="font-size:0.85rem; color:#ffb703;">${match.status || 'Tap to see live details'}</div>
+                                <div class="click-hint">Click to Open Full Page ➔</div>
                             </div>
                         `;
                     });
                 } else {
-                    container.innerHTML = `<div class="loading-text">No active live matches found on CricketData API right now.</div>`;
+                    container.innerHTML = `<div style="text-align:center; padding:30px; color:#8b949e;">No active matches found on API right now.</div>`;
                 }
             } catch (error) {
                 console.error("API Fetch Error:", error);
-                container.innerHTML = `<div class="loading-text" style="color:#ff4757;">API Connection Error or API Limit reached.</div>`;
+                container.innerHTML = `<div style="text-align:center; padding:30px; color:#ff4757;">API Connection Error. Retrying...</div>`;
             }
         }
 
-        function placeBet(teamName, odds) {
-            let amount = prompt(`Enter bet amount for ${teamName} (Odds: ${odds}):`);
+        // OPEN FULL PAGE FOR SELECTED MATCH
+        function openMatchDetail(index) {
+            let match = fetchedMatches[index];
+            if(!match) return;
+
+            document.getElementById('matchesListView').style.display = 'none';
+            document.getElementById('matchDetailPage').style.display = 'block';
+
+            // 1. SCORE DISPLAY
+            document.getElementById('detailMatchTitle').innerText = match.name;
+            document.getElementById('detailMatchStatus').innerText = match.status || 'Match in progress';
+
+            // 2. RATES / ODDS DISPLAY
+            let team1 = (match.teams && match.teams[0]) ? match.teams[0] : "Team A";
+            let team2 = (match.teams && match.teams[1]) ? match.teams[1] : "Team B";
+
+            document.getElementById('detailOddsContainer').innerHTML = `
+                <div class="odds-btn" onclick="placeBet('${team1} (Match Winner)', 1.90)">
+                    <div style="font-size:0.85rem; color:#8b949e;">${team1}</div>
+                    <div class="odds-val">1.90</div>
+                </div>
+                <div class="odds-btn" onclick="placeBet('${team2} (Match Winner)', 1.90)">
+                    <div style="font-size:0.85rem; color:#8b949e;">${team2}</div>
+                    <div class="odds-val">1.90</div>
+                </div>
+            `;
+
+            // 3. FANCIES DISPLAY
+            document.getElementById('detailFancyContainer').innerHTML = `
+                <div class="fancy-card">
+                    <div class="fancy-name">10 Over Runs Session</div>
+                    <div class="fancy-rates">
+                        <div class="rate-box" onclick="placeBet('10 Over Fancy - NO', 1.85)">NOT<span>78</span></div>
+                        <div class="rate-box" onclick="placeBet('10 Over Fancy - YES', 1.85)">YES<span>82</span></div>
+                    </div>
+                </div>
+                <div class="fancy-card">
+                    <div class="fancy-name">Fall of 1st Wicket</div>
+                    <div class="fancy-rates">
+                        <div class="rate-box" onclick="placeBet('1st Wicket - NOT', 1.85)">NOT<span>24</span></div>
+                        <div class="rate-box" onclick="placeBet('1st Wicket - YES', 1.85)">YES<span>26</span></div>
+                    </div>
+                </div>
+                <div class="fancy-card">
+                    <div class="fancy-name">Highest Opening Partnership</div>
+                    <div class="fancy-rates">
+                        <div class="rate-box" onclick="placeBet('${team1} Partnership', 1.90)"><span>${team1}</span></div>
+                        <div class="rate-box" onclick="placeBet('${team2} Partnership', 1.90)"><span>${team2}</span></div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function backToList() {
+            document.getElementById('matchDetailPage').style.display = 'none';
+            document.getElementById('matchesListView').style.display = 'block';
+        }
+
+        function placeBet(targetName, odds) {
+            let amount = prompt(`Enter bet amount for ${targetName} (Rate: ${odds}):`);
             if(!amount || isNaN(amount) || amount <= 0) return;
             amount = parseFloat(amount);
 
@@ -169,19 +275,19 @@
 
                 users[uIdx].balance -= amount;
                 localStorage.setItem('bhai_users', JSON.stringify(users));
-                document.getElementById('displayBalance').innerText = users[uIdx].balance;
+                updateBalanceDisplay();
 
                 let bets = JSON.parse(localStorage.getItem('bhai_bets') || '[]');
                 bets.push({
                     username: currentClient.username,
-                    match: `${teamName} (Odds: ${odds})`,
+                    match: `${targetName} (Rate: ${odds})`,
                     amount: amount,
                     status: 'Active',
                     date: new Date().toLocaleString()
                 });
                 localStorage.setItem('bhai_bets', JSON.stringify(bets));
 
-                alert(`Bet placed successfully on ${teamName} for Rs. ${amount}!`);
+                alert(`Bet placed successfully for Rs. ${amount}!`);
             }
         }
     </script>
