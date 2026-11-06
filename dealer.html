@@ -13,13 +13,18 @@
         .form-group label { display: block; margin-bottom: 5px; font-size: 0.9rem; color: #a0aec0; }
         .form-group input { width: 100%; padding: 10px; background: #243044; border: 1px solid #2a364f; color: white; border-radius: 5px; }
         .btn { background: #2ed573; color: black; border: none; padding: 10px; border-radius: 5px; font-weight: bold; cursor: pointer; width: 100%; }
-        #dealerDashboard { display: none; max-width: 750px; margin: 0 auto; }
+        .dep-btn { background: #2ed573; color: black; border: none; padding: 5px 8px; border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 0.75rem; }
+        .wit-btn { background: #ff4757; color: white; border: none; padding: 5px 8px; border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 0.75rem; }
+        #dealerDashboard { display: none; max-width: 850px; margin: 0 auto; }
         .dealer-header { display: flex; justify-content: space-between; align-items: center; background: #1a2332; padding: 15px; border-radius: 8px; border-bottom: 2px solid #2ed573; margin-bottom: 20px; }
         .card { background: #1a2332; border: 1px solid #2a364f; border-radius: 8px; padding: 20px; margin-bottom: 20px; }
         .card-title { color: #2ed573; font-size: 1.1rem; margin-bottom: 15px; border-bottom: 1px solid #2a364f; padding-bottom: 5px; }
         .data-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
         .data-table th, .data-table td { border: 1px solid #2a364f; padding: 8px; text-align: left; }
         .data-table th { background: #243044; color: #2ed573; }
+        .action-box { display: flex; flex-direction: column; gap: 5px; margin-top: 5px; }
+        .action-row { display: flex; gap: 5px; }
+        .action-row input { width: 80px; padding: 4px; background: #243044; border: 1px solid #2a364f; color: white; border-radius: 3px; font-size: 0.8rem; }
     </style>
 </head>
 <body>
@@ -68,19 +73,37 @@
             <button class="btn" onclick="createUser()">Create Client</button>
         </div>
 
-        <!-- Active Users List -->
+        <!-- Manage Clients List (Name, Password, Deposit & Withdraw) -->
         <div class="card">
-            <div class="card-title">📋 Active Clients List</div>
+            <div class="card-title">📋 Manage Clients (Name, Password, Deposit & Withdraw)</div>
             <table class="data-table">
                 <thead>
                     <tr>
-                        <th>Username</th>
-                        <th>Password</th>
-                        <th>Balance</th>
+                        <th>Client Username</th>
+                        <th>Password & Balance</th>
+                        <th>Actions (Deposit / Withdraw / Save)</th>
                     </tr>
                 </thead>
                 <tbody id="userTableBody">
-                    <!-- Users list will appear here -->
+                    <!-- Clients loaded here -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Bet History Card -->
+        <div class="card">
+            <div class="card-title">📊 Clients Bet History</div>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Client</th>
+                        <th>Match / Details</th>
+                        <th>Amount</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody id="betHistoryBody">
+                    <!-- Bet history loaded here -->
                 </tbody>
             </table>
         </div>
@@ -94,8 +117,6 @@
             let p = document.getElementById('dPass').value.trim();
 
             let dealers = JSON.parse(localStorage.getItem('bhai_dealers') || '[]');
-            console.log("Available Dealers:", dealers); // Debugging ke liye
-
             let found = dealers.find(d => d.username === u && d.password === p);
 
             if (found) {
@@ -105,6 +126,7 @@
                 document.getElementById('currentDealerName').innerText = `💼 ${found.username}`;
                 document.getElementById('currentDealerBalance').innerText = `Credit Balance: Rs. ${found.balance}`;
                 renderUsers();
+                renderBetHistory();
             } else {
                 alert('Ghalat Dealer Details! Pehle Admin panel se dealer banayein.');
             }
@@ -125,12 +147,14 @@
                 return;
             }
 
+            // Deduct from Dealer balance
             loggedDealer.balance -= b;
             let dealers = JSON.parse(localStorage.getItem('bhai_dealers') || '[]');
             let idx = dealers.findIndex(d => d.username === loggedDealer.username);
             if(idx !== -1) dealers[idx].balance = loggedDealer.balance;
             localStorage.setItem('bhai_dealers', JSON.stringify(dealers));
 
+            // Save user
             let users = JSON.parse(localStorage.getItem('bhai_users') || '[]');
             users.push({ username: u, password: p, balance: b, createdBy: loggedDealer.username });
             localStorage.setItem('bhai_users', JSON.stringify(users));
@@ -146,21 +170,114 @@
 
         function renderUsers() {
             let users = JSON.parse(localStorage.getItem('bhai_users') || '[]');
-            let myUsers = users.filter(u => u.createdBy === loggedDealer.username);
             let tbody = document.getElementById('userTableBody');
             tbody.innerHTML = '';
 
+            let myUsers = users.filter(u => u.createdBy === loggedDealer.username);
+
             if(myUsers.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="3" style="text-align:center; color:#8a99ad;">No users created yet.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="3" style="text-align:center; color:#8a99ad;">No clients created yet.</td></tr>`;
                 return;
             }
 
-            myUsers.forEach(u => {
+            users.forEach((u, index) => {
+                if(u.createdBy === loggedDealer.username) {
+                    tbody.innerHTML += `
+                        <tr>
+                            <td>
+                                <input type="text" id="editUser_${index}" value="${u.username}" style="background:#243044; border:1px solid #2a364f; color:white; padding:4px; width:100%; border-radius:3px;">
+                            </td>
+                            <td>
+                                <input type="text" id="editPass_${index}" value="${u.password}" style="background:#243044; border:1px solid #2a364f; color:white; padding:3px; width:100%; border-radius:3px; margin-bottom:3px;" placeholder="Password">
+                                <div style="color:#2ed573; font-weight:bold;">Bal: Rs. ${u.balance}</div>
+                            </td>
+                            <td>
+                                <div class="action-box">
+                                    <div class="action-row">
+                                        <input type="number" id="amount_${index}" placeholder="Amount">
+                                        <button class="dep-btn" onclick="clientAction(${index}, 'deposit')">Deposit</button>
+                                    </div>
+                                    <div class="action-row" style="margin-top:3px;">
+                                        <button class="wit-btn" onclick="clientAction(${index}, 'withdraw')">Withdraw</button>
+                                        <button class="dep-btn" style="background:#ffb703; color:black;" onclick="clientAction(${index}, 'save')">Save Info</button>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                }
+            });
+        }
+
+        function clientAction(index, actionType) {
+            let users = JSON.parse(localStorage.getItem('bhai_users') || '[]');
+            let dealers = JSON.parse(localStorage.getItem('bhai_dealers') || '[]');
+            
+            let newName = document.getElementById(`editUser_${index}`).value.trim();
+            let newPass = document.getElementById(`editPass_${index}`).value.trim();
+            let amount = parseFloat(document.getElementById(`amount_${index}`).value) || 0;
+
+            if(!newName || !newPass) {
+                alert('Username and Password cannot be empty!');
+                return;
+            }
+
+            let dIdx = dealers.findIndex(d => d.username === loggedDealer.username);
+
+            if(actionType === 'deposit') {
+                if(amount <= 0) { alert('Please enter valid deposit amount!'); return; }
+                if(amount > loggedDealer.balance) { alert('Aapke paas deposit ke liye itna credit balance nahi hai!'); return; }
+                
+                // Deduct from dealer, add to client
+                loggedDealer.balance -= amount;
+                users[index].balance += amount;
+                if(dIdx !== -1) dealers[dIdx].balance = loggedDealer.balance;
+                alert(`Rs. ${amount} successfully deposited to ${users[index].username}`);
+            } 
+            else if(actionType === 'withdraw') {
+                if(amount <= 0) { alert('Please enter valid withdrawal amount!'); return; }
+                if(amount > users[index].balance) { alert('Client ke paas itna balance nahi hai!'); return; }
+
+                // Deduct from client, add back to dealer
+                users[index].balance -= amount;
+                loggedDealer.balance += amount;
+                if(dIdx !== -1) dealers[dIdx].balance = loggedDealer.balance;
+                alert(`Rs. ${amount} successfully withdrawn from ${users[index].username}`);
+            }
+
+            // Always update name & password changes
+            users[index].username = newName;
+            users[index].password = newPass;
+
+            localStorage.setItem('bhai_users', JSON.stringify(users));
+            localStorage.setItem('bhai_dealers', JSON.stringify(dealers));
+            
+            document.getElementById('currentDealerBalance').innerText = `Credit Balance: Rs. ${loggedDealer.balance}`;
+            renderUsers();
+        }
+
+        function renderBetHistory() {
+            let bets = JSON.parse(localStorage.getItem('bhai_bets') || '[]');
+            let users = JSON.parse(localStorage.getItem('bhai_users') || '[]');
+            let myClientNames = users.filter(u => u.createdBy === loggedDealer.username).map(u => u.username);
+            
+            let tbody = document.getElementById('betHistoryBody');
+            tbody.innerHTML = '';
+
+            let myBets = bets.filter(b => myClientNames.includes(b.username));
+
+            if(myBets.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:#8a99ad;">No bet history found for your clients.</td></tr>`;
+                return;
+            }
+
+            myBets.forEach(b => {
                 tbody.innerHTML += `
                     <tr>
-                        <td><strong>${u.username}</strong></td>
-                        <td>${u.password}</td>
-                        <td style="color:#2ed573; font-weight:bold;">Rs. ${u.balance}</td>
+                        <td><strong>${b.username}</strong></td>
+                        <td>${b.match || 'Match Bet'}</td>
+                        <td style="color:#ffb703; font-weight:bold;">Rs. ${b.amount}</td>
+                        <td style="color:#2ed573;">${b.status || 'Active'}</td>
                     </tr>
                 `;
             });
