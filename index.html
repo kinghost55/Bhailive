@@ -1,39 +1,69 @@
-// Real-Time Live API Integration (Asli Match Only)
-        async function fetchRealTimeMatches() {
-            try {
-                const response = await fetch('https://api.cricapi.com/v1/currentMatches?apikey=PwD74O2768.432&offset=0');
-                const data = await response.json();
+<!DOCTYPE html>
+<html lang="ur" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bhai Live - Cricket</title>
+    <style>
+        body {
+            background-color: #121826;
+            color: #ffffff;
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            text-align: center;
+        }
+        .match-card {
+            background: #1a2332;
+            border: 1px solid #2a364f;
+            padding: 15px;
+            margin: 10px auto;
+            border-radius: 8px;
+            max-width: 400px;
+        }
+        .live-badge {
+            background: #ff4757;
+            color: white;
+            padding: 3px 8px;
+            font-size: 0.8rem;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
 
+    <h2>BHAI LIVE (بھائی لائیو)</h2>
+    <div id="matchesContainer">
+        <p style="color: #8a99ad;">Checking live matches...</p>
+    </div>
+
+    <script>
+        async function getMatches() {
+            try {
+                let res = await fetch('https://api.cricapi.com/v1/currentMatches?apikey=PwD74O2768.432&offset=0');
+                let data = await res.json();
+                
+                let container = document.getElementById('matchesContainer');
+                
                 if (data && data.data && data.data.length > 0) {
                     let html = '';
-                    data.data.forEach(match => {
-                        html += `
-                            <div class="match-card" onclick="openMatchDetail('${match.name}', '${match.status}', '${match.venue || "Live Ground"}', '1.82', '2.15', '168-171')">
-                                <span class="badge-live">🔴 LIVE</span>
-                                <div class="teams-header">
-                                    <span class="team-name">${match.name}</span>
-                                    <span class="score-info">${match.status}</span>
-                                </div>
-                                <div class="match-time">📍 ${match.venue || "Global Match"}</div>
-                            </div>
-                        `;
-                    });
-                    document.getElementById('liveMatchesList').innerHTML = html;
+                    for (let i = 0; i < data.data.length; i++) {
+                        let m = data.data[i];
+                        html += '<div class="match-card">';
+                        html += '<span class="live-badge">LIVE</span>';
+                        html += '<h3>' + m.name + '</h3>';
+                        html += '<p>' + m.status + '</p>';
+                        html += '</div>';
+                    }
+                    container.innerHTML = html;
                 } else {
-                    // Jab koi match live na ho toh yeh likha hua aayega
-                    document.getElementById('liveMatchesList').innerHTML = `
-                        <div style="text-align: center; padding: 40px; color: #8a99ad;">
-                            <h3 style="color: #ffb703; margin-bottom: 10px;">No Match Live</h3>
-                            <p>Is waqt koi match live nahi hai. Jab match shuru hoga toh yahan show ho jayega.</p>
-                        </div>
-                    `;
+                    container.innerHTML = '<h3 style="color: #ffb703; margin-top: 30px;">No Match Live</h3><p style="color: #8a99ad;">Is waqt koi match live nahi hai.</p>';
                 }
-            } catch (error) {
-                document.getElementById('liveMatchesList').innerHTML = `
-                    <div style="text-align: center; padding: 40px; color: #ff4757;">
-                        <h3>No Match</h3>
-                        <p>Connection error ya koi match mojood nahi hai.</p>
-                    </div>
-                `;
+            } catch (err) {
+                document.getElementById('matchesContainer').innerHTML = '<h3 style="color: #ffb703; margin-top: 30px;">No Match Live</h3>';
             }
         }
+        
+        getMatches();
+    </script>
+</body>
+</html>
