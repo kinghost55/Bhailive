@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bhai Live - Admin Control Panel</title>
+    <title>Bhai Live - Admin Login & Control Panel</title>
     <style>
         * {
             box-sizing: border-box;
@@ -16,6 +16,72 @@
             background-color: #0f141f;
             color: #ffffff;
             padding: 20px;
+        }
+
+        /* Admin Login Screen */
+        .login-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 80vh;
+        }
+
+        .login-card {
+            background: #1a2332;
+            border: 1px solid #ffb703;
+            border-radius: 10px;
+            padding: 30px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.5);
+            text-align: center;
+        }
+
+        .login-card h2 {
+            color: #ffb703;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+            color: #a0aec0;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            background: #243044;
+            border: 1px solid #2a364f;
+            color: white;
+            border-radius: 5px;
+        }
+
+        .btn {
+            background: #ffb703;
+            color: black;
+            border: none;
+            padding: 12px;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            transition: 0.2s;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+        }
+
+        /* Admin Dashboard (Hidden by default until login) */
+        #adminDashboard {
+            display: none;
         }
 
         .admin-header {
@@ -73,42 +139,6 @@
             padding-bottom: 8px;
         }
 
-        .form-group {
-            margin-bottom: 15px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 5px;
-            font-size: 0.9rem;
-            color: #a0aec0;
-        }
-
-        .form-group input {
-            width: 100%;
-            padding: 10px;
-            background: #243044;
-            border: 1px solid #2a364f;
-            color: white;
-            border-radius: 5px;
-        }
-
-        .btn {
-            background: #ffb703;
-            color: black;
-            border: none;
-            padding: 10px 15px;
-            border-radius: 5px;
-            font-weight: bold;
-            cursor: pointer;
-            width: 100%;
-            transition: 0.2s;
-        }
-
-        .btn:hover {
-            opacity: 0.9;
-        }
-
         .btn-sm {
             padding: 5px 10px;
             font-size: 0.8rem;
@@ -119,20 +149,9 @@
             border: none;
         }
 
-        .btn-danger {
-            background: #ff4757;
-            color: white;
-        }
-
-        .btn-success {
-            background: #2ed573;
-            color: black;
-        }
-
-        .btn-info {
-            background: #3742fa;
-            color: white;
-        }
+        .btn-danger { background: #ff4757; color: white; }
+        .btn-success { background: #2ed573; color: black; }
+        .btn-info { background: #3742fa; color: white; }
 
         .search-box {
             width: 100%;
@@ -165,95 +184,105 @@
         .modal {
             display: none;
             position: fixed;
-            top: 50%;
-            left: 50%;
+            top: 50%; left: 50%;
             transform: translate(-50%, -50%);
-            background: #1a2332;
-            padding: 20px;
-            border-radius: 10px;
-            border: 1px solid #ffb703;
-            z-index: 3000;
-            width: 90%;
-            max-width: 500px;
-            max-height: 80vh;
-            overflow-y: auto;
+            background: #1a2332; padding: 20px;
+            border-radius: 10px; border: 1px solid #ffb703;
+            z-index: 3000; width: 90%; max-width: 500px;
+            max-height: 80vh; overflow-y: auto;
         }
         .modal.active { display: block; }
         .overlay {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.7);
-            display: none;
-            z-index: 2999;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.7); display: none; z-index: 2999;
         }
         .overlay.active { display: block; }
     </style>
 </head>
 <body>
 
-    <div class="admin-header">
-        <div class="admin-title">👑 Bhai Live - Admin Control Panel</div>
-        <button class="logout-admin" onclick="adminLogout()">Logout</button>
+    <!-- 1. Admin Login Section -->
+    <div class="login-wrapper" id="loginScreen">
+        <div class="login-card">
+            <h2>👑 Admin Login</h2>
+            <div class="form-group">
+                <label>Admin Username</label>
+                <input type="text" id="adminUser" placeholder="Enter admin username">
+            </div>
+            <div class="form-group">
+                <label>Admin Password</label>
+                <input type="password" id="adminPass" placeholder="Enter admin password">
+            </div>
+            <button class="btn" onclick="adminLogin()">Login to Panel</button>
+        </div>
     </div>
 
-    <div class="admin-grid">
-        <!-- Left Column: User Creation & Balance Control -->
-        <div>
-            <div class="card">
-                <div class="card-title">👤 Create New User Account</div>
-                <div class="form-group">
-                    <label>Username / ID</label>
-                    <input type="text" id="newUsername" placeholder="Enter username">
-                </div>
-                <div class="form-group">
-                    <label>Password</label>
-                    <input type="password" id="newPassword" placeholder="Enter password">
-                </div>
-                <div class="form-group">
-                    <label>Starting Balance (Rs.)</label>
-                    <input type="number" id="newBalance" placeholder="0.00">
-                </div>
-                <button class="btn" onclick="createUser()">Create Account</button>
-            </div>
-
-            <div class="card">
-                <div class="card-title">💰 Deposit & Withdraw Control</div>
-                <div class="form-group">
-                    <label>Target Username</label>
-                    <input type="text" id="targetUser" placeholder="Enter exact username">
-                </div>
-                <div class="form-group">
-                    <label>Amount (Rs.)</label>
-                    <input type="number" id="targetAmount" placeholder="Enter amount">
-                </div>
-                <div style="display: flex; gap: 10px;">
-                    <button class="btn btn-success" onclick="adjustBalance('Deposit')">Deposit</button>
-                    <button class="btn btn-danger" onclick="adjustBalance('Withdraw')">Withdraw</button>
-                </div>
-            </div>
+    <!-- 2. Admin Dashboard (Protected) -->
+    <div id="adminDashboard">
+        <div class="admin-header">
+            <div class="admin-title">👑 Bhai Live - Admin Control Panel</div>
+            <button class="logout-admin" onclick="adminLogout()">Logout</button>
         </div>
 
-        <!-- Right Column: User Management & History -->
-        <div>
-            <div class="card">
-                <div class="card-title">📋 Active Users & Management</div>
-                <input type="text" class="search-box" id="userSearch" placeholder="Search user by name..." onkeyup="filterUsers()">
-                
-                <div style="overflow-x: auto;">
-                    <table class="data-table" id="usersTable">
-                        <thead>
-                            <tr>
-                                <th>Username</th>
-                                <th>Balance</th>
-                                <th>Password</th>
-                                <th>History</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody id="usersTableBody">
-                            <!-- Dynamic Users Loaded Here -->
-                        </tbody>
-                    </table>
+        <div class="admin-grid">
+            <!-- Left Column: User Creation & Balance Control -->
+            <div>
+                <div class="card">
+                    <div class="card-title">👤 Create New User Account</div>
+                    <div class="form-group">
+                        <label>Username / ID</label>
+                        <input type="text" id="newUsername" placeholder="Enter username">
+                    </div>
+                    <div class="form-group">
+                        <label>Password</label>
+                        <input type="password" id="newPassword" placeholder="Enter password">
+                    </div>
+                    <div class="form-group">
+                        <label>Starting Balance (Rs.)</label>
+                        <input type="number" id="newBalance" placeholder="0.00">
+                    </div>
+                    <button class="btn" onclick="createUser()">Create Account</button>
+                </div>
+
+                <div class="card">
+                    <div class="card-title">💰 Deposit & Withdraw Control</div>
+                    <div class="form-group">
+                        <label>Target Username</label>
+                        <input type="text" id="targetUser" placeholder="Enter exact username">
+                    </div>
+                    <div class="form-group">
+                        <label>Amount (Rs.)</label>
+                        <input type="number" id="targetAmount" placeholder="Enter amount">
+                    </div>
+                    <div style="display: flex; gap: 10px;">
+                        <button class="btn btn-success" onclick="adjustBalance('Deposit')">Deposit</button>
+                        <button class="btn btn-danger" onclick="adjustBalance('Withdraw')">Withdraw</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column: User Management & History -->
+            <div>
+                <div class="card">
+                    <div class="card-title">📋 Active Users & Management</div>
+                    <input type="text" class="search-box" id="userSearch" placeholder="Search user by name..." onkeyup="filterUsers()">
+                    
+                    <div style="overflow-x: auto;">
+                        <table class="data-table" id="usersTable">
+                            <thead>
+                                <tr>
+                                    <th>Username</th>
+                                    <th>Balance</th>
+                                    <th>Password</th>
+                                    <th>History</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="usersTableBody">
+                                <!-- Dynamic Users Loaded Here -->
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
@@ -267,9 +296,39 @@
     </div>
 
     <script>
+        // Check if admin is already logged in during this session
         window.onload = function() {
-            renderUsersTable();
+            if(sessionStorage.getItem('bhai_admin_logged') === 'true') {
+                showDashboard();
+            }
         };
+
+        function adminLogin() {
+            const user = document.getElementById('adminUser').value.trim();
+            const pass = document.getElementById('adminPass').value.trim();
+
+            // Aap yahan apna admin username aur password change kar sakte hain
+            if(user === 'admin' && pass === '12345') {
+                sessionStorage.setItem('bhai_admin_logged', 'true');
+                showDashboard();
+            } else {
+                alert('Ghalat Username ya Password! Dobara koshish karein.');
+            }
+        }
+
+        function showDashboard() {
+            document.getElementById('loginScreen').style.display = 'none';
+            document.getElementById('adminDashboard').style.display = 'block';
+            renderUsersTable();
+        }
+
+        function adminLogout() {
+            sessionStorage.removeItem('bhai_admin_logged');
+            document.getElementById('adminDashboard').style.display = 'none';
+            document.getElementById('loginScreen').style.display = 'flex';
+            document.getElementById('adminUser').value = '';
+            document.getElementById('adminPass').value = '';
+        }
 
         function getUsers() {
             let users = localStorage.getItem('bhai_users');
@@ -451,11 +510,6 @@
                     tr[i].style.display = txtValue.toLowerCase().indexOf(input) > -1 ? "" : "none";
                 }
             }
-        }
-
-        function adminLogout() {
-            alert('Admin logged out securely.');
-            location.reload();
         }
     </script>
 </body>
