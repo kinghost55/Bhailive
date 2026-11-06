@@ -3,57 +3,63 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>King Cricket - Cloud Live Platform</title>
-    <!-- Firebase SDK -->
+    <title>King Cricket - Pro Live Platform</title>
+    <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
     
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
-        body { background-color: #0d1117; color: #ffffff; padding: 10px; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, sans-serif; }
+        body { background-color: #0b0e14; color: #ffffff; padding: 8px; }
         
-        /* Header */
-        .header { display: flex; justify-content: space-between; align-items: center; background: #161b22; padding: 12px 15px; border-bottom: 2px solid #2ed573; border-radius: 6px; margin-bottom: 15px; }
-        .user-info { font-size: 0.9rem; color: #ffb703; font-weight: bold; }
-        .logout-btn { background: #ff4757; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: bold; }
+        /* Main Header */
+        .header { display: flex; justify-content: space-between; align-items: center; background: #161b22; padding: 12px 15px; border-bottom: 2px solid #2ed573; border-radius: 6px; margin-bottom: 12px; }
+        .logo-title { color: #2ed573; font-size: 1.1rem; font-weight: bold; }
+        .user-info { font-size: 0.85rem; color: #ffb703; margin-top: 2px; }
+        .logout-btn { background: #ff4757; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 0.85rem; }
         
-        /* Panels */
-        .panel-box { max-width: 400px; margin: 40px auto; background: #161b22; padding: 25px; border-radius: 8px; border: 1px solid #30363d; }
-        .panel-box input { width: 100%; padding: 10px; margin: 8px 0; background: #0d1117; border: 1px solid #30363d; color: white; border-radius: 4px; }
-        .panel-box button { width: 100%; padding: 10px; background: #2ed573; color: black; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; margin-top: 10px; }
-        
+        /* Login & Panels */
+        .panel-box { max-width: 380px; margin: 50px auto; background: #161b22; padding: 25px; border-radius: 8px; border: 1px solid #30363d; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
+        .panel-box h2 { color: #2ed573; margin-bottom: 15px; text-align: center; font-size: 1.3rem; }
+        .panel-box input { width: 100%; padding: 10px; margin: 8px 0; background: #0d1117; border: 1px solid #30363d; color: white; border-radius: 4px; font-size: 0.95rem; }
+        .panel-box button { width: 100%; padding: 11px; background: #2ed573; color: #000; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; margin-top: 12px; font-size: 1rem; }
+        .panel-box button:hover { background: #26af5f; }
+
         /* Match Card List View */
-        .match-card { background: #161b22; border: 1px solid #2ed573; border-radius: 8px; padding: 15px; margin-bottom: 15px; cursor: pointer; transition: 0.2s; }
-        .match-card:hover { background: #1f242d; }
-        .match-type { font-size: 0.75rem; color: #8b949e; text-transform: uppercase; }
-        .status-live { color: #ff4757; font-weight: bold; animation: blink 1.5s infinite; }
+        .match-card { background: #161b22; border: 1px solid #30363d; border-left: 4px solid #2ed573; border-radius: 8px; padding: 14px; margin-bottom: 12px; cursor: pointer; transition: 0.2s; }
+        .match-card:hover { background: #1c2128; border-color: #2ed573; }
+        .match-type { font-size: 0.75rem; color: #8b949e; text-transform: uppercase; font-weight: bold; }
+        .status-live { color: #ff4757; font-weight: bold; animation: blink 1.2s infinite; }
         @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
-        .teams-title { font-size: 1.1rem; font-weight: bold; color: #ffffff; margin: 8px 0; }
-        .click-hint { font-size: 0.8rem; color: #2ed573; text-align: right; margin-top: 5px; }
+        .teams-title { font-size: 1.05rem; font-weight: bold; color: #ffffff; margin: 6px 0; }
+        .match-substatus { font-size: 0.85rem; color: #ffb703; }
+        .click-hint { font-size: 0.75rem; color: #2ed573; text-align: right; margin-top: 4px; font-weight: bold; }
 
         /* Full Match Detail Page View */
         #matchDetailPage { display: none; }
-        .back-btn { background: #21262d; border: 1px solid #30363d; color: white; padding: 6px 12px; border-radius: 4px; cursor: pointer; margin-bottom: 12px; font-weight: bold; }
-        .score-box { background: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 15px; margin-bottom: 15px; text-align: center; }
-        .score-title { color: #2ed573; font-size: 1.2rem; font-weight: bold; margin-bottom: 5px; }
-        .score-desc { font-size: 0.95rem; color: #ffb703; }
+        .back-btn { background: #21262d; border: 1px solid #30363d; color: white; padding: 6px 14px; border-radius: 4px; cursor: pointer; margin-bottom: 12px; font-weight: bold; font-size: 0.9rem; }
+        
+        .score-box { background: linear-gradient(135deg, #161b22 0%, #1f242d 100%); border: 1px solid #30363d; border-radius: 8px; padding: 15px; margin-bottom: 15px; text-align: center; }
+        .score-title { color: #2ed573; font-size: 1.15rem; font-weight: bold; margin-bottom: 4px; }
+        .score-desc { font-size: 0.9rem; color: #ffb703; font-weight: bold; }
         
         /* Odds Section */
-        .section-header { font-size: 1rem; color: #ffb703; font-weight: bold; margin: 15px 0 8px 0; border-bottom: 1px solid #30363d; padding-bottom: 5px; }
-        .odds-container { display: flex; gap: 10px; margin-bottom: 15px; }
-        .odds-btn { flex: 1; background: #21262d; border: 1px solid #30363d; padding: 10px; border-radius: 5px; text-align: center; cursor: pointer; }
-        .odds-btn:hover { border-color: #2ed573; }
-        .odds-val { font-size: 1.1rem; font-weight: bold; color: #2ed573; margin-top: 3px; }
+        .section-header { font-size: 0.95rem; color: #ffb703; font-weight: bold; margin: 15px 0 8px 0; border-bottom: 1px solid #30363d; padding-bottom: 4px; display: flex; justify-content: space-between; }
+        .odds-container { display: flex; gap: 10px; margin-bottom: 12px; }
+        .odds-btn { flex: 1; background: #161b22; border: 1px solid #30363d; padding: 10px; border-radius: 6px; text-align: center; cursor: pointer; transition: 0.2s; }
+        .odds-btn:hover { border-color: #2ed573; background: #1f242d; }
+        .odds-val { font-size: 1.1rem; font-weight: bold; color: #2ed573; margin-top: 2px; }
 
         /* Fancy Section */
-        .fancy-card { background: #161b22; border: 1px solid #30363d; border-radius: 6px; padding: 10px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
-        .fancy-name { font-size: 0.9rem; font-weight: bold; }
-        .fancy-rates { display: flex; gap: 8px; }
-        .rate-box { background: #21262d; border: 1px solid #30363d; padding: 6px 12px; border-radius: 4px; text-align: center; cursor: pointer; font-size: 0.85rem; }
-        .rate-box span { display: block; font-weight: bold; color: #2ed573; }
+        .fancy-card { background: #161b22; border: 1px solid #30363d; border-radius: 6px; padding: 10px 12px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
+        .fancy-name { font-size: 0.9rem; font-weight: bold; color: #e6edf3; }
+        .fancy-rates { display: flex; gap: 6px; }
+        .rate-box { background: #21262d; border: 1px solid #30363d; padding: 6px 12px; border-radius: 4px; text-align: center; cursor: pointer; font-size: 0.8rem; min-width: 60px; }
+        .rate-box:hover { border-color: #2ed573; }
+        .rate-box span { display: block; font-weight: bold; color: #2ed573; font-size: 0.9rem; }
 
-        /* Dealer Control */
-        .dealer-table { width: 100%; margin-top: 15px; border-collapse: collapse; font-size: 0.85rem; }
+        /* Dealer Panel Tables */
+        .dealer-table { width: 100%; margin-top: 10px; border-collapse: collapse; font-size: 0.85rem; background: #161b22; border-radius: 6px; overflow: hidden; }
         .dealer-table th, .dealer-table td { border: 1px solid #30363d; padding: 8px; text-align: center; }
         .dealer-table th { background: #21262d; color: #2ed573; }
     </style>
@@ -62,40 +68,43 @@
 
     <!-- LOGIN SCREEN -->
     <div id="loginScreen" class="panel-box">
-        <h2 style="color:#2ed573; margin-bottom:15px; text-align:center;">🏏 King Cricket Login</h2>
-        <input type="text" id="cUser" placeholder="Username (Client or Dealer)">
+        <h2>🏏 King Cricket Pro</h2>
+        <input type="text" id="cUser" placeholder="Username (Client/Dealer)">
         <input type="password" id="cPass" placeholder="Password">
-        <button onclick="userLogin()">Login to System</button>
+        <button onclick="userLogin()">Login</button>
     </div>
 
     <!-- CLIENT DASHBOARD -->
     <div id="clientDashboard" style="display: none;">
         <div class="header">
             <div>
-                <h3 style="color:#2ed573;">👑 King Cricket</h3>
-                <div class="user-info">Account: <span id="displayUsername"></span> | Bal: Rs. <span id="displayBalance">0</span></div>
+                <div class="logo-title">👑 King Cricket</div>
+                <div class="user-info">ID: <span id="displayUsername"></span> | Bal: Rs. <span id="displayBalance">0</span></div>
             </div>
             <button class="logout-btn" onclick="userLogout()">Logout</button>
         </div>
 
         <!-- LIST VIEW -->
         <div id="matchesListView">
-            <div style="font-weight: bold; color: #ffb703; margin-bottom: 10px;">🔴 Cloud Live Matches</div>
+            <div style="font-weight: bold; color: #ffb703; margin-bottom: 10px; font-size: 0.95rem;">🔴 Live Matches (Classbet Feed)</div>
             <div id="apiMatchesContainer">
-                <div style="text-align:center; padding:30px; color:#8b949e;">Fetching Live Matches...</div>
+                <div style="text-align:center; padding:30px; color:#8b949e;">Loading Matches...</div>
             </div>
         </div>
 
         <!-- DETAIL PAGE -->
         <div id="matchDetailPage">
             <button class="back-btn" onclick="backToList()">⬅ Back to Matches</button>
+            
             <div class="score-box">
                 <div class="score-title" id="detailMatchTitle">Loading...</div>
                 <div class="score-desc" id="detailMatchStatus">Fetching score...</div>
             </div>
-            <div class="section-header">📈 Match Rates / Winner Odds</div>
+
+            <div class="section-header"><span>📈 Match Winner Odds</span><span style="color:#8b949e; font-size:0.8rem;">Back / Lay</span></div>
             <div class="odds-container" id="detailOddsContainer"></div>
-            <div class="section-header">⚡ Live Fancies (Session / Wickets)</div>
+
+            <div class="section-header"><span>⚡ Live Fancies (Session & Wickets)</span><span style="color:#8b949e; font-size:0.8rem;">Not / Yes</span></div>
             <div id="detailFancyContainer"></div>
         </div>
     </div>
@@ -104,39 +113,37 @@
     <div id="dealerDashboard" style="display: none;">
         <div class="header">
             <div>
-                <h3 style="color:#2ed573;">👑 Dealer Panel (Cloud)</h3>
+                <div class="logo-title">👑 Dealer Control Panel</div>
                 <div class="user-info">Dealer: <span id="dealerNameDisplay"></span></div>
             </div>
             <button class="logout-btn" onclick="userLogout()">Logout</button>
         </div>
-        <div class="panel-box" style="max-width:100%; margin:0 0 20px 0;">
-            <h3 style="color:#2ed573; margin-bottom:10px;">Create New Client Account</h3>
+        <div class="panel-box" style="max-width:100%; margin:0 0 15px 0;">
+            <h3 style="color:#2ed573; margin-bottom:10px; font-size:1.1rem;">Create Client Account</h3>
             <input type="text" id="newClientUser" placeholder="Client Username">
             <input type="password" id="newClientPass" placeholder="Client Password">
             <input type="number" id="newClientBal" placeholder="Initial Balance (Rs)">
-            <button onclick="createClientAccount()">Create Account on Cloud</button>
+            <button onclick="createClientAccount()">Create Account</button>
         </div>
-        <h3 style="color:#ffb703;">Manage Clients</h3>
+        <div style="font-weight:bold; color:#ffb703; margin-bottom:5px;">Manage Clients & Balance</div>
         <div style="overflow-x:auto;">
             <table class="dealer-table">
                 <thead>
-                    <tr><th>Username</th><th>Balance</th><th>Action</th></tr>
+                    <tr><th>Username</th><th>Balance</th><th>Quick Actions</th></tr>
                 </thead>
                 <tbody id="dealerClientsList">
-                    <!-- Dynamic Cloud Clients -->
+                    <tr><td colspan="3">Loading...</td></tr>
                 </tbody>
             </table>
         </div>
     </div>
 
     <script>
-        // --- FIREBASE CONFIGURATION ---
         const firebaseConfig = {
             apiKey: "AIzaSyDummyKeyForCloudSync99",
             authDomain: "king-cricket-cloud.firebaseapp.com",
             projectId: "king-cricket-cloud"
         };
-        // Safe initialization check
         if (!firebase.apps.length) {
             firebase.initializeApp(firebaseConfig);
         }
@@ -168,7 +175,6 @@
                 return;
             }
 
-            // Check Firebase Cloud for Client
             try {
                 let doc = await db.collection("users").doc(u).get();
                 if(doc.exists && doc.data().password === p) {
@@ -180,7 +186,7 @@
                     alert('Ghalat Username ya Password!');
                 }
             } catch(e) {
-                alert('Cloud Connection Error! Check internet.');
+                alert('Connection Error! Internet check karein.');
             }
         }
 
@@ -202,12 +208,11 @@
             }
         }
 
-        // --- CLIENT FUNCTIONS ---
         function startClientLiveFeed() {
             syncClientBalance();
             fetchLiveCricketData();
             setInterval(fetchLiveCricketData, 15000);
-            // Realtime balance listener from cloud
+            
             db.collection("users").doc(currentUser).onSnapshot((doc) => {
                 if(doc.exists) {
                     document.getElementById('displayBalance').innerText = doc.data().balance;
@@ -251,12 +256,12 @@
                 container.innerHTML += `
                     <div class="match-card" onclick="openMatchDetail(${index})">
                         <div style="display:flex; justify-content:space-between;">
-                            <span class="match-type">${match.matchType ? match.matchType.toUpperCase() : 'T20 MATCH'}</span>
+                            <span class="match-type">${match.matchType ? match.matchType.toUpperCase() : 'CRICKET MATCH'}</span>
                             <span class="${isLive ? 'status-live' : ''}">${statusText}</span>
                         </div>
                         <div class="teams-title">${match.name}</div>
-                        <div style="font-size:0.85rem; color:#ffb703;">${match.status || 'Tap to see live details'}</div>
-                        <div class="click-hint">Click to Open Match Page ➔</div>
+                        <div class="match-substatus">${match.status || 'Tap to open match panel'}</div>
+                        <div class="click-hint">Open Match & Fancies ➔</div>
                     </div>
                 `;
             });
@@ -264,8 +269,8 @@
 
         function renderFallbackMatches() {
             renderMatchesList([
-                { name: "Pakistan vs Australia", matchType: "T20", status: "PAK: 142/3 (15.2 Overs) - LIVE NOW", matchStarted: true, matchEnded: false, teams: ["Pakistan", "Australia"] },
-                { name: "India vs England", matchType: "ODI", status: "Starts today at 7:00 PM", matchStarted: false, matchEnded: false, teams: ["India", "England"] }
+                { name: "Pakistan vs Australia", matchType: "T20 International", status: "PAK: 142/3 (15.2 Overs) - LIVE", matchStarted: true, matchEnded: false, teams: ["Pakistan", "Australia"] },
+                { name: "India vs England", matchType: "ODI Series", status: "Starts today at 7:00 PM", matchStarted: false, matchEnded: false, teams: ["India", "England"] }
             ]);
         }
 
@@ -284,11 +289,11 @@
 
             document.getElementById('detailOddsContainer').innerHTML = `
                 <div class="odds-btn" onclick="placeBet('${team1} (Winner)', 1.90)">
-                    <div style="font-size:0.85rem; color:#8b949e;">${team1}</div>
+                    <div style="font-size:0.8rem; color:#8b949e;">${team1}</div>
                     <div class="odds-val">1.90</div>
                 </div>
                 <div class="odds-btn" onclick="placeBet('${team2} (Winner)', 1.90)">
-                    <div style="font-size:0.85rem; color:#8b949e;">${team2}</div>
+                    <div style="font-size:0.8rem; color:#8b949e;">${team2}</div>
                     <div class="odds-val">1.90</div>
                 </div>
             `;
@@ -306,6 +311,13 @@
                     <div class="fancy-rates">
                         <div class="rate-box" onclick="placeBet('1st Wicket - NOT', 1.85)">NOT<span>24</span></div>
                         <div class="rate-box" onclick="placeBet('1st Wicket - YES', 1.85)">YES<span>26</span></div>
+                    </div>
+                </div>
+                <div class="fancy-card">
+                    <div class="fancy-name">Highest Opening Partnership</div>
+                    <div class="fancy-rates">
+                        <div class="rate-box" onclick="placeBet('${team1} Partnership', 1.90)"><span>${team1}</span></div>
+                        <div class="rate-box" onclick="placeBet('${team2} Partnership', 1.90)"><span>${team2}</span></div>
                     </div>
                 </div>
             `;
@@ -335,7 +347,6 @@
             alert(`Bet placed successfully for Rs. ${amount}!`);
         }
 
-        // --- DEALER FUNCTIONS ---
         async function createClientAccount() {
             let u = document.getElementById('newClientUser').value.trim();
             let p = document.getElementById('newClientPass').value.trim();
@@ -352,7 +363,7 @@
                 balance: b
             });
 
-            alert(`Client ${u} created successfully on Cloud!`);
+            alert(`Client ${u} created successfully!`);
             document.getElementById('newClientUser').value = '';
             document.getElementById('newClientPass').value = '';
             document.getElementById('newClientBal').value = '';
@@ -361,7 +372,7 @@
 
         async function loadDealerClients() {
             let tbody = document.getElementById('dealerClientsList');
-            tbody.innerHTML = `<tr><td colspan="3">Loading from Cloud...</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="3">Loading...</td></tr>`;
 
             let snapshot = await db.collection("users").get();
             tbody.innerHTML = '';
@@ -370,11 +381,11 @@
                 let data = doc.data();
                 tbody.innerHTML += `
                     <tr>
-                        <td>${data.username}</td>
-                        <td>Rs. ${data.balance}</td>
+                        <td><b>${data.username}</b></td>
+                        <td style="color:#2ed573; font-weight:bold;">Rs. ${data.balance}</td>
                         <td>
-                            <button onclick="modifyBalance('${data.username}', 1000)" style="background:#2ed573; border:none; padding:4px 8px; cursor:pointer;">+1000</button>
-                            <button onclick="modifyBalance('${data.username}', -1000)" style="background:#ff4757; color:white; border:none; padding:4px 8px; cursor:pointer;">-1000</button>
+                            <button onclick="modifyBalance('${data.username}', 1000)" style="background:#2ed573; border:none; padding:4px 8px; cursor:pointer; font-weight:bold; border-radius:3px;">+1000</button>
+                            <button onclick="modifyBalance('${data.username}', -1000)" style="background:#ff4757; color:white; border:none; padding:4px 8px; cursor:pointer; font-weight:bold; border-radius:3px; margin-left:4px;">-1000</button>
                         </td>
                     </tr>
                 `;
