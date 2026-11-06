@@ -3,513 +3,104 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bhai Live - Admin Login & Control Panel</title>
+    <title>Master Admin Panel - Bhai Live</title>
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
-        body {
-            background-color: #0f141f;
-            color: #ffffff;
-            padding: 20px;
-        }
-
-        /* Admin Login Screen */
-        .login-wrapper {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 80vh;
-        }
-
-        .login-card {
-            background: #1a2332;
-            border: 1px solid #ffb703;
-            border-radius: 10px;
-            padding: 30px;
-            width: 100%;
-            max-width: 400px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.5);
-            text-align: center;
-        }
-
-        .login-card h2 {
-            color: #ffb703;
-            margin-bottom: 20px;
-        }
-
-        .form-group {
-            margin-bottom: 15px;
-            text-align: left;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 5px;
-            font-size: 0.9rem;
-            color: #a0aec0;
-        }
-
-        .form-group input {
-            width: 100%;
-            padding: 12px;
-            background: #243044;
-            border: 1px solid #2a364f;
-            color: white;
-            border-radius: 5px;
-        }
-
-        .btn {
-            background: #ffb703;
-            color: black;
-            border: none;
-            padding: 12px;
-            border-radius: 5px;
-            font-weight: bold;
-            cursor: pointer;
-            width: 100%;
-            transition: 0.2s;
-        }
-
-        .btn:hover {
-            opacity: 0.9;
-        }
-
-        /* Admin Dashboard (Hidden by default until login) */
-        #adminDashboard {
-            display: none;
-        }
-
-        .admin-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: #1a2332;
-            padding: 15px 20px;
-            border-radius: 8px;
-            border-bottom: 2px solid #ffb703;
-            margin-bottom: 20px;
-        }
-
-        .admin-title {
-            color: #ffb703;
-            font-size: 1.5rem;
-            font-weight: bold;
-        }
-
-        .logout-admin {
-            background: #ff4757;
-            color: white;
-            border: none;
-            padding: 8px 15px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-weight: bold;
-        }
-
-        .admin-grid {
-            display: grid;
-            grid-template-columns: 1fr 2fr;
-            gap: 20px;
-        }
-
-        @media(max-width: 900px) {
-            .admin-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        .card {
-            background: #1a2332;
-            border: 1px solid #2a364f;
-            border-radius: 8px;
-            padding: 20px;
-            margin-bottom: 20px;
-        }
-
-        .card-title {
-            color: #ffb703;
-            font-size: 1.2rem;
-            margin-bottom: 15px;
-            border-bottom: 1px solid #2a364f;
-            padding-bottom: 8px;
-        }
-
-        .btn-sm {
-            padding: 5px 10px;
-            font-size: 0.8rem;
-            width: auto;
-            border-radius: 4px;
-            cursor: pointer;
-            font-weight: bold;
-            border: none;
-        }
-
-        .btn-danger { background: #ff4757; color: white; }
-        .btn-success { background: #2ed573; color: black; }
-        .btn-info { background: #3742fa; color: white; }
-
-        .search-box {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 15px;
-            background: #243044;
-            border: 1px solid #2a364f;
-            color: white;
-            border-radius: 5px;
-        }
-
-        .data-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 0.85rem;
-            margin-top: 10px;
-        }
-
-        .data-table th, .data-table td {
-            border: 1px solid #2a364f;
-            padding: 8px;
-            text-align: left;
-        }
-
-        .data-table th {
-            background: #243044;
-            color: #ffb703;
-        }
-
-        .modal {
-            display: none;
-            position: fixed;
-            top: 50%; left: 50%;
-            transform: translate(-50%, -50%);
-            background: #1a2332; padding: 20px;
-            border-radius: 10px; border: 1px solid #ffb703;
-            z-index: 3000; width: 90%; max-width: 500px;
-            max-height: 80vh; overflow-y: auto;
-        }
-        .modal.active { display: block; }
-        .overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.7); display: none; z-index: 2999;
-        }
-        .overlay.active { display: block; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
+        body { background-color: #0f141f; color: #ffffff; padding: 20px; }
+        .login-wrapper { display: flex; justify-content: center; align-items: center; height: 80vh; }
+        .login-card { background: #1a2332; border: 1px solid #ffb703; border-radius: 10px; padding: 30px; width: 100%; max-width: 400px; text-align: center; }
+        .form-group { margin-bottom: 15px; text-align: left; }
+        .form-group label { display: block; margin-bottom: 5px; font-size: 0.9rem; color: #a0aec0; }
+        .form-group input { width: 100%; padding: 10px; background: #243044; border: 1px solid #2a364f; color: white; border-radius: 5px; }
+        .btn { background: #ffb703; color: black; border: none; padding: 10px; border-radius: 5px; font-weight: bold; cursor: pointer; width: 100%; }
+        #adminDashboard { display: none; }
+        .admin-header { display: flex; justify-content: space-between; align-items: center; background: #1a2332; padding: 15px; border-radius: 8px; border-bottom: 2px solid #ffb703; margin-bottom: 20px; }
+        .card { background: #1a2332; border: 1px solid #2a364f; border-radius: 8px; padding: 20px; margin-bottom: 20px; }
+        .card-title { color: #ffb703; font-size: 1.1rem; margin-bottom: 15px; border-bottom: 1px solid #2a364f; padding-bottom: 5px; }
+        .grid { display: grid; grid-template-columns: 1fr 2fr; gap: 20px; }
+        @media(max-width: 800px) { .grid { grid-template-columns: 1fr; } }
+        .data-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+        .data-table th, .data-table td { border: 1px solid #2a364f; padding: 8px; text-align: left; }
+        .data-table th { background: #243044; color: #ffb703; }
     </style>
 </head>
 <body>
 
-    <!-- 1. Admin Login Section -->
     <div class="login-wrapper" id="loginScreen">
         <div class="login-card">
-            <h2>👑 Admin Login</h2>
-            <div class="form-group">
-                <label>Admin Username</label>
-                <input type="text" id="adminUser" placeholder="Enter admin username">
-            </div>
-            <div class="form-group">
-                <label>Admin Password</label>
-                <input type="password" id="adminPass" placeholder="Enter admin password">
-            </div>
-            <button class="btn" onclick="adminLogin()">Login to Panel</button>
+            <h2 style="color:#ffb703; margin-bottom:15px;">👑 Master Admin Login</h2>
+            <div class="form-group"><label>Admin User</label><input type="text" id="aUser"></div>
+            <div class="form-group"><label>Admin Password</label><input type="password" id="aPass"></div>
+            <button class="btn" onclick="adminLogin()">Login</button>
         </div>
     </div>
 
-    <!-- 2. Admin Dashboard (Protected) -->
     <div id="adminDashboard">
         <div class="admin-header">
-            <div class="admin-title">👑 Bhai Live - Admin Control Panel</div>
-            <button class="logout-admin" onclick="adminLogout()">Logout</button>
+            <div style="color:#ffb703; font-weight:bold; font-size:1.3rem;">👑 Bhai Live - Main Owner Panel</div>
+            <button style="background:#ff4757; color:white; border:none; padding:6px 12px; border-radius:4px; cursor:pointer;" onclick="location.reload()">Logout</button>
         </div>
 
-        <div class="admin-grid">
-            <!-- Left Column: User Creation & Balance Control -->
+        <div class="grid">
             <div>
                 <div class="card">
-                    <div class="card-title">👤 Create New User Account</div>
-                    <div class="form-group">
-                        <label>Username / ID</label>
-                        <input type="text" id="newUsername" placeholder="Enter username">
-                    </div>
-                    <div class="form-group">
-                        <label>Password</label>
-                        <input type="password" id="newPassword" placeholder="Enter password">
-                    </div>
-                    <div class="form-group">
-                        <label>Starting Balance (Rs.)</label>
-                        <input type="number" id="newBalance" placeholder="0.00">
-                    </div>
-                    <button class="btn" onclick="createUser()">Create Account</button>
-                </div>
-
-                <div class="card">
-                    <div class="card-title">💰 Deposit & Withdraw Control</div>
-                    <div class="form-group">
-                        <label>Target Username</label>
-                        <input type="text" id="targetUser" placeholder="Enter exact username">
-                    </div>
-                    <div class="form-group">
-                        <label>Amount (Rs.)</label>
-                        <input type="number" id="targetAmount" placeholder="Enter amount">
-                    </div>
-                    <div style="display: flex; gap: 10px;">
-                        <button class="btn btn-success" onclick="adjustBalance('Deposit')">Deposit</button>
-                        <button class="btn btn-danger" onclick="adjustBalance('Withdraw')">Withdraw</button>
-                    </div>
+                    <div class="card-title">💼 Create Dealer (Sub-Admin)</div>
+                    <div class="form-group"><label>Dealer Username</label><input type="text" id="dName"></div>
+                    <div class="form-group"><label>Dealer Password</label><input type="password" id="dPass"></div>
+                    <div class="form-group"><label>Assign Credit Balance</label><input type="number" id="dBal"></div>
+                    <button class="btn" onclick="createDealer()">Create Dealer</button>
                 </div>
             </div>
 
-            <!-- Right Column: User Management & History -->
             <div>
                 <div class="card">
-                    <div class="card-title">📋 Active Users & Management</div>
-                    <input type="text" class="search-box" id="userSearch" placeholder="Search user by name..." onkeyup="filterUsers()">
-                    
-                    <div style="overflow-x: auto;">
-                        <table class="data-table" id="usersTable">
-                            <thead>
-                                <tr>
-                                    <th>Username</th>
-                                    <th>Balance</th>
-                                    <th>Password</th>
-                                    <th>History</th>
-                                    <th>Action</th>
-                                </tr>
-                            </thead>
-                            <tbody id="usersTableBody">
-                                <!-- Dynamic Users Loaded Here -->
-                            </tbody>
-                        </table>
-                    </div>
+                    <div class="card-title">📋 Active Dealers List</div>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Dealer Username</th>
+                                <th>Credit Balance</th>
+                                <th>Password</th>
+                            </tr>
+                        </thead>
+                        <tbody id="dealerTableBody"></tbody>
+                    </table>
                 </div>
             </div>
         </div>
-    </div>
-
-    <div class="overlay" id="overlay" onclick="closeModal()"></div>
-    <div class="modal" id="adminModal">
-        <h3 id="modalTitle" style="color: #ffb703; margin-bottom: 10px;">Details</h3>
-        <div id="modalBody"></div>
-        <button class="btn btn-danger" style="margin-top: 15px;" onclick="closeModal()">Close</button>
     </div>
 
     <script>
-        // Check if admin is already logged in during this session
-        window.onload = function() {
-            if(sessionStorage.getItem('bhai_admin_logged') === 'true') {
-                showDashboard();
-            }
-        };
-
         function adminLogin() {
-            const user = document.getElementById('adminUser').value.trim();
-            const pass = document.getElementById('adminPass').value.trim();
-
-            // Aap yahan apna admin username aur password change kar sakte hain
-            if(user === 'admin' && pass === '12345') {
-                sessionStorage.setItem('bhai_admin_logged', 'true');
-                showDashboard();
-            } else {
-                alert('Ghalat Username ya Password! Dobara koshish karein.');
-            }
+            if(document.getElementById('aUser').value === 'admin' && document.getElementById('aPass').value === '12345') {
+                document.getElementById('loginScreen').style.display = 'none';
+                document.getElementById('adminDashboard').style.display = 'block';
+                renderDealers();
+            } else { alert('Ghalat Details!'); }
         }
 
-        function showDashboard() {
-            document.getElementById('loginScreen').style.display = 'none';
-            document.getElementById('adminDashboard').style.display = 'block';
-            renderUsersTable();
+        function createDealer() {
+            let u = document.getElementById('dName').value.trim();
+            let p = document.getElementById('dPass').value.trim();
+            let b = parseFloat(document.getElementById('dBal').value) || 0;
+
+            if(!u || !p) { alert('Fill all fields!'); return; }
+
+            let dealers = JSON.parse(localStorage.getItem('bhai_dealers') || '[]');
+            dealers.push({ username: u, password: p, balance: b });
+            localStorage.setItem('bhai_dealers', JSON.stringify(dealers));
+
+            renderDealers();
+            alert(`Dealer '${u}' Created!`);
         }
 
-        function adminLogout() {
-            sessionStorage.removeItem('bhai_admin_logged');
-            document.getElementById('adminDashboard').style.display = 'none';
-            document.getElementById('loginScreen').style.display = 'flex';
-            document.getElementById('adminUser').value = '';
-            document.getElementById('adminPass').value = '';
-        }
-
-        function getUsers() {
-            let users = localStorage.getItem('bhai_users');
-            if (!users) {
-                users = JSON.stringify([
-                    { username: 'Bhatti_User1', password: '123', balance: 15000, history: [{type: 'Deposit', amount: 15000, date: '2026-11-06'}] }
-                ]);
-                localStorage.setItem('bhai_users', users);
-            }
-            return JSON.parse(users);
-        }
-
-        function saveUsers(users) {
-            localStorage.setItem('bhai_users', JSON.stringify(users));
-        }
-
-        function renderUsersTable() {
-            const users = getUsers();
-            const tbody = document.getElementById('usersTableBody');
+        function renderDealers() {
+            let dealers = JSON.parse(localStorage.getItem('bhai_dealers') || '[]');
+            let tbody = document.getElementById('dealerTableBody');
             tbody.innerHTML = '';
-
-            users.forEach((u, index) => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td><strong>${u.username}</strong></td>
-                    <td style="color: #2ed573; font-weight: bold;">Rs. ${u.balance}</td>
-                    <td><input type="text" value="${u.password}" style="background:#243044; border:1px solid #2a364f; color:white; width:80px; padding:3px; border-radius:3px;" onchange="updatePassword(${index}, this.value)"></td>
-                    <td><button class="btn-sm btn-info" onclick="viewHistory('${u.username}')">📜 History</button></td>
-                    <td>
-                        <div style="display: flex; gap: 5px;">
-                            <button class="btn-sm btn-success" onclick="quickEditUser(${index})">✏️ Edit</button>
-                            <button class="btn-sm btn-danger" onclick="deleteUser('${u.username}')">🗑️ Delete</button>
-                        </div>
-                    </td>
-                `;
-                tbody.appendChild(row);
+            dealers.forEach(d => {
+                tbody.innerHTML += `<tr><td><strong>${d.username}</strong></td><td style="color:#ffb703;">Rs. ${d.balance}</td><td>${d.password}</td></tr>`;
             });
-        }
-
-        function createUser() {
-            const user = document.getElementById('newUsername').value.trim();
-            const pass = document.getElementById('newPassword').value.trim();
-            const bal = parseFloat(document.getElementById('newBalance').value) || 0;
-
-            if(!user || !pass) {
-                alert('Please enter both username and password!');
-                return;
-            }
-
-            let users = getUsers();
-            if(users.some(u => u.username === user)) {
-                alert('User with this username already exists!');
-                return;
-            }
-
-            users.push({
-                username: user,
-                password: pass,
-                balance: bal,
-                history: bal > 0 ? [{type: 'Initial Deposit', amount: bal, date: new Date().toLocaleDateString()}] : []
-            });
-
-            saveUsers(users);
-            renderUsersTable();
-            alert(`User '${user}' created successfully!`);
-            
-            document.getElementById('newUsername').value = '';
-            document.getElementById('newPassword').value = '';
-            document.getElementById('newBalance').value = '';
-        }
-
-        function adjustBalance(type) {
-            const target = document.getElementById('targetUser').value.trim();
-            const amount = parseFloat(document.getElementById('targetAmount').value);
-
-            if(!target || isNaN(amount) || amount <= 0) {
-                alert('Please provide a valid username and amount.');
-                return;
-            }
-
-            let users = getUsers();
-            let userObj = users.find(u => u.username === target);
-
-            if(!userObj) {
-                alert('User not found!');
-                return;
-            }
-
-            if(type === 'Deposit') {
-                userObj.balance += amount;
-                userObj.history.push({type: 'Deposit', amount: amount, date: new Date().toLocaleDateString()});
-                alert(`Successfully deposited Rs. ${amount} to '${target}'. New Balance: Rs. ${userObj.balance}`);
-            } else {
-                if(userObj.balance < amount) {
-                    alert('User does not have enough balance for this withdrawal!');
-                    return;
-                }
-                userObj.balance -= amount;
-                userObj.history.push({type: 'Withdraw', amount: amount, date: new Date().toLocaleDateString()});
-                alert(`Successfully withdrew Rs. ${amount} from '${target}'. New Balance: Rs. ${userObj.balance}`);
-            }
-
-            saveUsers(users);
-            renderUsersTable();
-            document.getElementById('targetUser').value = '';
-            document.getElementById('targetAmount').value = '';
-        }
-
-        function updatePassword(index, newPass) {
-            let users = getUsers();
-            users[index].password = newPass;
-            saveUsers(users);
-            alert('Password updated successfully!');
-        }
-
-        function quickEditUser(index) {
-            let users = getUsers();
-            let u = users[index];
-            let newName = prompt("Enter new username:", u.username);
-            if(newName && newName.trim() !== "") {
-                if(users.some((usr, i) => usr.username === newName && i !== index)) {
-                    alert("Username already exists!");
-                    return;
-                }
-                u.username = newName.trim();
-                saveUsers(users);
-                renderUsersTable();
-                alert("Username updated successfully!");
-            }
-        }
-
-        function deleteUser(username) {
-            if(confirm(`Are you sure you want to delete user '${username}'?`)) {
-                let users = getUsers();
-                users = users.filter(u => u.username !== username);
-                saveUsers(users);
-                renderUsersTable();
-                alert(`User '${username}' deleted.`);
-            }
-        }
-
-        function viewHistory(username) {
-            let users = getUsers();
-            let u = users.find(usr => usr.username === username);
-            if(!u) return;
-
-            document.getElementById('modalTitle').innerText = `History: ${u.username}`;
-            let html = `<p style="margin-bottom:10px; color:#ffb703;">Current Balance: Rs. ${u.balance}</p>`;
-            
-            if(u.history && u.history.length > 0) {
-                html += `<table class="data-table"><thead><tr><th>Type</th><th>Amount</th><th>Date</th></tr></thead><tbody>`;
-                u.history.forEach(h => {
-                    html += `<tr><td>${h.type}</td><td style="color:#2ed573;">Rs. ${h.amount}</td><td>${h.date}</td></tr>`;
-                });
-                html += `</tbody></table>`;
-            } else {
-                html += `<p style="color:#8a99ad;">No history recorded yet.</p>`;
-            }
-
-            document.getElementById('modalBody').innerHTML = html;
-            document.getElementById('adminModal').classList.add('active');
-            document.getElementById('overlay').classList.add('active');
-        }
-
-        function closeModal() {
-            document.getElementById('adminModal').classList.remove('active');
-            document.getElementById('overlay').classList.remove('active');
-        }
-
-        function filterUsers() {
-            let input = document.getElementById('userSearch').value.toLowerCase();
-            let table = document.getElementById('usersTable');
-            let tr = table.getElementsByTagName('tr');
-
-            for (let i = 1; i < tr.length; i++) {
-                let td = tr[i].getElementsByTagName('td')[0];
-                if (td) {
-                    let txtValue = td.textContent || td.innerText;
-                    tr[i].style.display = txtValue.toLowerCase().indexOf(input) > -1 ? "" : "none";
-                }
-            }
         }
     </script>
 </body>
