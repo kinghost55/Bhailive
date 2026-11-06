@@ -32,11 +32,11 @@
             <h2 style="color:#ffb703; margin-bottom:15px;">👑 Master Admin Login</h2>
             <div class="form-group">
                 <label>Admin User</label>
-                <input type="text" id="aUser" placeholder="admin">
+                <input type="text" id="aUser" value="admin">
             </div>
             <div class="form-group">
                 <label>Admin Password</label>
-                <input type="password" id="aPass" placeholder="1212">
+                <input type="password" id="aPass" value="1212">
             </div>
             <button class="btn" onclick="adminLogin()">Login</button>
         </div>
@@ -94,12 +94,13 @@
             let userInput = document.getElementById('aUser').value.trim();
             let passInput = document.getElementById('aPass').value.trim();
 
+            // Direct check
             if(userInput === 'admin' && passInput === '1212') {
                 document.getElementById('loginScreen').style.display = 'none';
                 document.getElementById('adminDashboard').style.display = 'block';
                 renderDealers();
             } else { 
-                alert('Ghalat Username ya Password! (Use: admin / 1212)'); 
+                alert('Ghalat Details! Use admin / 1212'); 
             }
         }
 
@@ -120,7 +121,7 @@
             renderDealers();
             alert(`Dealer '${u}' Created Successfully!`);
 
-            document.getElementById('dName').value = '';
+            document.getElementById('dName.value = '';
             document.getElementById('dPass').value = '';
             document.getElementById('dBal').value = '';
         }
