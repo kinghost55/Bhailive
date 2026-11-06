@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="urur" dir="ltr">
+<html lang="ur" dir="ltr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -26,15 +26,23 @@
 </head>
 <body>
 
+    <!-- Login Screen -->
     <div class="login-wrapper" id="loginScreen">
         <div class="login-card">
             <h2 style="color:#ffb703; margin-bottom:15px;">👑 Master Admin Login</h2>
-            <div class="form-group"><label>Admin User</label><input type="text" id="aUser"></div>
-            <div class="form-group"><label>Admin Password</label><input type="password" id="aPass"></div>
+            <div class="form-group">
+                <label>Admin User</label>
+                <input type="text" id="aUser" placeholder="admin">
+            </div>
+            <div class="form-group">
+                <label>Admin Password</label>
+                <input type="password" id="aPass" placeholder="1212">
+            </div>
             <button class="btn" onclick="adminLogin()">Login</button>
         </div>
     </div>
 
+    <!-- Admin Dashboard -->
     <div id="adminDashboard">
         <div class="admin-header">
             <div style="color:#ffb703; font-weight:bold; font-size:1.3rem;">👑 Bhai Live - Main Owner Panel</div>
@@ -45,9 +53,18 @@
             <div>
                 <div class="card">
                     <div class="card-title">💼 Create Dealer (Sub-Admin)</div>
-                    <div class="form-group"><label>Dealer Username</label><input type="text" id="dName"></div>
-                    <div class="form-group"><label>Dealer Password</label><input type="password" id="dPass"></div>
-                    <div class="form-group"><label>Assign Credit Balance</label><input type="number" id="dBal"></div>
+                    <div class="form-group">
+                        <label>Dealer Username</label>
+                        <input type="text" id="dName" placeholder="Enter dealer username">
+                    </div>
+                    <div class="form-group">
+                        <label>Dealer Password</label>
+                        <input type="password" id="dPass" placeholder="Enter password">
+                    </div>
+                    <div class="form-group">
+                        <label>Assign Credit Balance</label>
+                        <input type="number" id="dBal" placeholder="0.00">
+                    </div>
                     <button class="btn" onclick="createDealer()">Create Dealer</button>
                 </div>
             </div>
@@ -63,7 +80,9 @@
                                 <th>Password</th>
                             </tr>
                         </thead>
-                        <tbody id="dealerTableBody"></tbody>
+                        <tbody id="dealerTableBody">
+                            <!-- Dealers loaded here -->
+                        </tbody>
                     </table>
                 </div>
             </div>
@@ -72,11 +91,16 @@
 
     <script>
         function adminLogin() {
-            if(document.getElementById('aUser').value === 'admin' && document.getElementById('aPass').value === '12345') {
+            let userInput = document.getElementById('aUser').value.trim();
+            let passInput = document.getElementById('aPass').value.trim();
+
+            if(userInput === 'admin' && passInput === '1212') {
                 document.getElementById('loginScreen').style.display = 'none';
                 document.getElementById('adminDashboard').style.display = 'block';
                 renderDealers();
-            } else { alert('Ghalat Details!'); }
+            } else { 
+                alert('Ghalat Username ya Password! (Use: admin / 1212)'); 
+            }
         }
 
         function createDealer() {
@@ -84,22 +108,41 @@
             let p = document.getElementById('dPass').value.trim();
             let b = parseFloat(document.getElementById('dBal').value) || 0;
 
-            if(!u || !p) { alert('Fill all fields!'); return; }
+            if(!u || !p) { 
+                alert('Please fill all fields!'); 
+                return; 
+            }
 
             let dealers = JSON.parse(localStorage.getItem('bhai_dealers') || '[]');
             dealers.push({ username: u, password: p, balance: b });
             localStorage.setItem('bhai_dealers', JSON.stringify(dealers));
 
             renderDealers();
-            alert(`Dealer '${u}' Created!`);
+            alert(`Dealer '${u}' Created Successfully!`);
+
+            document.getElementById('dName').value = '';
+            document.getElementById('dPass').value = '';
+            document.getElementById('dBal').value = '';
         }
 
         function renderDealers() {
             let dealers = JSON.parse(localStorage.getItem('bhai_dealers') || '[]');
             let tbody = document.getElementById('dealerTableBody');
             tbody.innerHTML = '';
+            
+            if(dealers.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="3" style="text-align:center; color:#8a99ad;">No dealers created yet.</td></tr>`;
+                return;
+            }
+
             dealers.forEach(d => {
-                tbody.innerHTML += `<tr><td><strong>${d.username}</strong></td><td style="color:#ffb703;">Rs. ${d.balance}</td><td>${d.password}</td></tr>`;
+                tbody.innerHTML += `
+                    <tr>
+                        <td><strong>${d.username}</strong></td>
+                        <td style="color:#ffb703; font-weight:bold;">Rs. ${d.balance}</td>
+                        <td>${d.password}</td>
+                    </tr>
+                `;
             });
         }
     </script>
