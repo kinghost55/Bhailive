@@ -66,14 +66,13 @@
     <script>
         let currentClient = null;
 
-        // Sample Matches Data with correct statuses
+        // Clean & Correct Matches Data
         const matchesData = [
-            { id: 1, teamA: "Pakistan", teamB: "India", type: "live", statusText: "LIVE 15.4 Overs", oddsA: "1.85", oddsB: "2.10" },
-            { id: 2, teamA: "Australia", teamB: "England", type: "live", statusText: "LIVE Inning Break", oddsA: "1.90", oddsB: "1.90" },
-            { id: 3, teamA: "South Africa", teamB: "New Zealand", type: "upcoming", statusText: "Starts Today 7:00 PM", oddsA: "1.75", oddsB: "2.20" }
+            { id: 1, teamA: "Pakistan", teamB: "Australia", type: "live", statusText: "LIVE 12.3 Overs", oddsA: "1.80", oddsB: "2.05" },
+            { id: 2, teamA: "India", teamB: "England", type: "upcoming", statusText: "Starts Tomorrow 7:30 PM", oddsA: "1.75", oddsB: "2.15" },
+            { id: 3, teamA: "New Zealand", teamB: "South Africa", type: "upcoming", statusText: "Starts in 2 Days", oddsA: "1.90", oddsB: "1.90" }
         ];
 
-        // CHECK IF ALREADY LOGGED IN
         window.onload = function() {
             let session = JSON.parse(sessionStorage.getItem('bhai_active_client'));
             if(session) {
@@ -112,7 +111,6 @@
             document.getElementById('mainDashboard').style.display = 'block';
             document.getElementById('displayUsername').innerText = currentClient.username;
             
-            // Sync Fresh Balance from localStorage
             let users = JSON.parse(localStorage.getItem('bhai_users') || '[]');
             let fresh = users.find(x => x.username === currentClient.username);
             if(fresh) {
@@ -144,7 +142,7 @@
                 container.innerHTML += `
                     <div class="match-card">
                         <div class="match-header">
-                            <span>T20 World Match</span>
+                            <span>International Match</span>
                             <span class="${badgeClass}">${m.statusText}</span>
                         </div>
                         <div class="teams">${m.teamA} vs ${m.teamB}</div>
@@ -181,7 +179,6 @@
                 localStorage.setItem('bhai_users', JSON.stringify(users));
                 document.getElementById('displayBalance').innerText = users[uIdx].balance;
 
-                // Save Bet History for Dealer to see
                 let bets = JSON.parse(localStorage.getItem('bhai_bets') || '[]');
                 bets.push({
                     username: currentClient.username,
