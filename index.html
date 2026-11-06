@@ -3,17 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>King Cricket - Pro Live Platform</title>
-    <!-- Firebase SDKs -->
-    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
-    
+    <title>King Cricket - Live Platform</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, sans-serif; }
-        body { background-color: #0b0e14; color: #ffffff; padding: 8px; }
+        body { background-color: #0b0e14; color: #ffffff; padding: 10px; }
         
-        /* Main Header */
-        .header { display: flex; justify-content: space-between; align-items: center; background: #161b22; padding: 12px 15px; border-bottom: 2px solid #2ed573; border-radius: 6px; margin-bottom: 12px; }
+        /* Header */
+        .header { display: flex; justify-content: space-between; align-items: center; background: #161b22; padding: 12px 15px; border-bottom: 2px solid #2ed573; border-radius: 6px; margin-bottom: 15px; }
         .logo-title { color: #2ed573; font-size: 1.1rem; font-weight: bold; }
         .user-info { font-size: 0.85rem; color: #ffb703; margin-top: 2px; }
         .logout-btn { background: #ff4757; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 0.85rem; }
@@ -23,7 +19,6 @@
         .panel-box h2 { color: #2ed573; margin-bottom: 15px; text-align: center; font-size: 1.3rem; }
         .panel-box input { width: 100%; padding: 10px; margin: 8px 0; background: #0d1117; border: 1px solid #30363d; color: white; border-radius: 4px; font-size: 0.95rem; }
         .panel-box button { width: 100%; padding: 11px; background: #2ed573; color: #000; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; margin-top: 12px; font-size: 1rem; }
-        .panel-box button:hover { background: #26af5f; }
 
         /* Match Card List View */
         .match-card { background: #161b22; border: 1px solid #30363d; border-left: 4px solid #2ed573; border-radius: 8px; padding: 14px; margin-bottom: 12px; cursor: pointer; transition: 0.2s; }
@@ -46,8 +41,8 @@
         /* Odds Section */
         .section-header { font-size: 0.95rem; color: #ffb703; font-weight: bold; margin: 15px 0 8px 0; border-bottom: 1px solid #30363d; padding-bottom: 4px; display: flex; justify-content: space-between; }
         .odds-container { display: flex; gap: 10px; margin-bottom: 12px; }
-        .odds-btn { flex: 1; background: #161b22; border: 1px solid #30363d; padding: 10px; border-radius: 6px; text-align: center; cursor: pointer; transition: 0.2s; }
-        .odds-btn:hover { border-color: #2ed573; background: #1f242d; }
+        .odds-btn { flex: 1; background: #161b22; border: 1px solid #30363d; padding: 10px; border-radius: 6px; text-align: center; cursor: pointer; }
+        .odds-btn:hover { border-color: #2ed573; }
         .odds-val { font-size: 1.1rem; font-weight: bold; color: #2ed573; margin-top: 2px; }
 
         /* Fancy Section */
@@ -55,10 +50,9 @@
         .fancy-name { font-size: 0.9rem; font-weight: bold; color: #e6edf3; }
         .fancy-rates { display: flex; gap: 6px; }
         .rate-box { background: #21262d; border: 1px solid #30363d; padding: 6px 12px; border-radius: 4px; text-align: center; cursor: pointer; font-size: 0.8rem; min-width: 60px; }
-        .rate-box:hover { border-color: #2ed573; }
         .rate-box span { display: block; font-weight: bold; color: #2ed573; font-size: 0.9rem; }
 
-        /* Dealer Panel Tables */
+        /* Dealer Tables */
         .dealer-table { width: 100%; margin-top: 10px; border-collapse: collapse; font-size: 0.85rem; background: #161b22; border-radius: 6px; overflow: hidden; }
         .dealer-table th, .dealer-table td { border: 1px solid #30363d; padding: 8px; text-align: center; }
         .dealer-table th { background: #21262d; color: #2ed573; }
@@ -68,7 +62,7 @@
 
     <!-- LOGIN SCREEN -->
     <div id="loginScreen" class="panel-box">
-        <h2>🏏 King Cricket Pro</h2>
+        <h2>🏏 King Cricket</h2>
         <input type="text" id="cUser" placeholder="Username (Client/Dealer)">
         <input type="password" id="cPass" placeholder="Password">
         <button onclick="userLogin()">Login</button>
@@ -87,9 +81,7 @@
         <!-- LIST VIEW -->
         <div id="matchesListView">
             <div style="font-weight: bold; color: #ffb703; margin-bottom: 10px; font-size: 0.95rem;">🔴 Live Matches (Classbet Feed)</div>
-            <div id="apiMatchesContainer">
-                <div style="text-align:center; padding:30px; color:#8b949e;">Loading Matches...</div>
-            </div>
+            <div id="apiMatchesContainer"></div>
         </div>
 
         <!-- DETAIL PAGE -->
@@ -129,171 +121,119 @@
         <div style="overflow-x:auto;">
             <table class="dealer-table">
                 <thead>
-                    <tr><th>Username</th><th>Balance</th><th>Quick Actions</th></tr>
+                    <tr><th>Username</th><th>Password</th><th>Balance</th><th>Quick Actions</th></tr>
                 </thead>
-                <tbody id="dealerClientsList">
-                    <tr><td colspan="3">Loading...</td></tr>
-                </tbody>
+                <tbody id="dealerClientsList"></tbody>
             </table>
         </div>
     </div>
 
     <script>
-        const firebaseConfig = {
-            apiKey: "AIzaSyDummyKeyForCloudSync99",
-            authDomain: "king-cricket-cloud.firebaseapp.com",
-            projectId: "king-cricket-cloud"
-        };
-        if (!firebase.apps.length) {
-            firebase.initializeApp(firebaseConfig);
-        }
-        const db = firebase.firestore();
-
-        const API_KEY = "PwD74O2768.432";
         let currentUser = null;
         let userRole = null;
-        let fetchedMatches = [];
+        let activeMatches = [
+            { id: 1, name: "Pakistan vs Australia", type: "T20 International", status: "PAK: 154/3 (16.4 Overs) - LIVE", team1: "Pakistan", team2: "Australia" },
+            { id: 2, name: "India vs England", type: "ODI Series", status: "IND: 220/4 (35.1 Overs) - LIVE", team1: "India", team2: "England" },
+            { id: 3, name: "South Africa vs New Zealand", type: "Test Match", status: "Day 2: Stumps - NZ lead by 45 runs", team1: "South Africa", team2: "New Zealand" }
+        ];
 
         window.onload = function() {
-            let session = JSON.parse(sessionStorage.getItem('bhai_cloud_session'));
+            let session = JSON.parse(localStorage.getItem('king_session') || 'null');
             if(session) {
                 currentUser = session.username;
                 userRole = session.role;
-                loadCorrectDashboard();
+                loadDashboard();
             }
         };
 
-        async function userLogin() {
+        function userLogin() {
             let u = document.getElementById('cUser').value.trim();
             let p = document.getElementById('cPass').value.trim();
 
             if(u === "dealer" && p === "dealer123") {
                 currentUser = "Dealer";
                 userRole = "dealer";
-                sessionStorage.setItem('bhai_cloud_session', JSON.stringify({username: u, role: 'dealer'}));
-                loadCorrectDashboard();
+                localStorage.setItem('king_session', JSON.stringify({username: u, role: 'dealer'}));
+                loadDashboard();
                 return;
             }
 
-            try {
-                let doc = await db.collection("users").doc(u).get();
-                if(doc.exists && doc.data().password === p) {
-                    currentUser = u;
-                    userRole = "client";
-                    sessionStorage.setItem('bhai_cloud_session', JSON.stringify({username: u, role: 'client'}));
-                    loadCorrectDashboard();
-                } else {
-                    alert('Ghalat Username ya Password!');
-                }
-            } catch(e) {
-                alert('Connection Error! Internet check karein.');
+            let users = JSON.parse(localStorage.getItem('king_users') || '[]');
+            let found = users.find(x => x.username === u && x.password === p);
+
+            if(found) {
+                currentUser = u;
+                userRole = "client";
+                localStorage.setItem('king_session', JSON.stringify({username: u, role: 'client'}));
+                loadDashboard();
+            } else {
+                alert('Ghalat Username ya Password!');
             }
         }
 
         function userLogout() {
-            sessionStorage.removeItem('bhai_cloud_session');
+            localStorage.removeItem('king_session');
             location.reload();
         }
 
-        function loadCorrectDashboard() {
+        function loadDashboard() {
             document.getElementById('loginScreen').style.display = 'none';
             if(userRole === 'dealer') {
                 document.getElementById('dealerDashboard').style.display = 'block';
                 document.getElementById('dealerNameDisplay').innerText = currentUser;
-                loadDealerClients();
+                loadClientsTable();
             } else {
                 document.getElementById('clientDashboard').style.display = 'block';
                 document.getElementById('displayUsername').innerText = currentUser;
-                startClientLiveFeed();
+                updateClientBalanceDisplay();
+                renderMatches();
             }
         }
 
-        function startClientLiveFeed() {
-            syncClientBalance();
-            fetchLiveCricketData();
-            setInterval(fetchLiveCricketData, 15000);
-            
-            db.collection("users").doc(currentUser).onSnapshot((doc) => {
-                if(doc.exists) {
-                    document.getElementById('displayBalance').innerText = doc.data().balance;
-                }
-            });
-        }
-
-        async function syncClientBalance() {
-            let doc = await db.collection("users").doc(currentUser).get();
-            if(doc.exists) {
-                document.getElementById('displayBalance').innerText = doc.data().balance;
+        function updateClientBalanceDisplay() {
+            let users = JSON.parse(localStorage.getItem('king_users') || '[]');
+            let me = users.find(x => x.username === currentUser);
+            if(me) {
+                document.getElementById('displayBalance').innerText = me.balance;
             }
         }
 
-        async function fetchLiveCricketData() {
-            let container = document.getElementById('apiMatchesContainer');
-            let targetUrl = `https://api.cricketdata.org/v1/currentMatches?apikey=${API_KEY}&offset=0`;
-
-            try {
-                let response = await fetch(targetUrl);
-                let result = await response.json();
-                if (result && result.data && result.data.length > 0) {
-                    renderMatchesList(result.data);
-                } else {
-                    renderFallbackMatches();
-                }
-            } catch (error) {
-                renderFallbackMatches();
-            }
-        }
-
-        function renderMatchesList(matches) {
-            fetchedMatches = matches;
+        function renderMatches() {
             let container = document.getElementById('apiMatchesContainer');
             container.innerHTML = '';
 
-            matches.forEach((match, index) => {
-                let isLive = match.matchStarted && !match.matchEnded;
-                let statusText = isLive ? '🔴 LIVE NOW' : (match.matchEnded ? '🏁 FINISHED' : '📅 UPCOMING');
-
+            activeMatches.forEach((match, index) => {
                 container.innerHTML += `
-                    <div class="match-card" onclick="openMatchDetail(${index})">
+                    <div class="match-card" onclick="openMatch(${index})">
                         <div style="display:flex; justify-content:space-between;">
-                            <span class="match-type">${match.matchType ? match.matchType.toUpperCase() : 'CRICKET MATCH'}</span>
-                            <span class="${isLive ? 'status-live' : ''}">${statusText}</span>
+                            <span class="match-type">${match.type}</span>
+                            <span class="status-live">🔴 LIVE</span>
                         </div>
                         <div class="teams-title">${match.name}</div>
-                        <div class="match-substatus">${match.status || 'Tap to open match panel'}</div>
+                        <div class="match-substatus">${match.status}</div>
                         <div class="click-hint">Open Match & Fancies ➔</div>
                     </div>
                 `;
             });
         }
 
-        function renderFallbackMatches() {
-            renderMatchesList([
-                { name: "Pakistan vs Australia", matchType: "T20 International", status: "PAK: 142/3 (15.2 Overs) - LIVE", matchStarted: true, matchEnded: false, teams: ["Pakistan", "Australia"] },
-                { name: "India vs England", matchType: "ODI Series", status: "Starts today at 7:00 PM", matchStarted: false, matchEnded: false, teams: ["India", "England"] }
-            ]);
-        }
-
-        function openMatchDetail(index) {
-            let match = fetchedMatches[index];
+        function openMatch(index) {
+            let match = activeMatches[index];
             if(!match) return;
 
             document.getElementById('matchesListView').style.display = 'none';
             document.getElementById('matchDetailPage').style.display = 'block';
 
             document.getElementById('detailMatchTitle').innerText = match.name;
-            document.getElementById('detailMatchStatus').innerText = match.status || 'Match in progress';
-
-            let team1 = (match.teams && match.teams[0]) ? match.teams[0] : "Team A";
-            let team2 = (match.teams && match.teams[1]) ? match.teams[1] : "Team B";
+            document.getElementById('detailMatchStatus').innerText = match.status;
 
             document.getElementById('detailOddsContainer').innerHTML = `
-                <div class="odds-btn" onclick="placeBet('${team1} (Winner)', 1.90)">
-                    <div style="font-size:0.8rem; color:#8b949e;">${team1}</div>
+                <div class="odds-btn" onclick="placeBet('${match.team1} Win', 1.90)">
+                    <div style="font-size:0.8rem; color:#8b949e;">${match.team1}</div>
                     <div class="odds-val">1.90</div>
                 </div>
-                <div class="odds-btn" onclick="placeBet('${team2} (Winner)', 1.90)">
-                    <div style="font-size:0.8rem; color:#8b949e;">${team2}</div>
+                <div class="odds-btn" onclick="placeBet('${match.team2} Win', 1.90)">
+                    <div style="font-size:0.8rem; color:#8b949e;">${match.team2}</div>
                     <div class="odds-val">1.90</div>
                 </div>
             `;
@@ -302,8 +242,8 @@
                 <div class="fancy-card">
                     <div class="fancy-name">10 Over Runs Session</div>
                     <div class="fancy-rates">
-                        <div class="rate-box" onclick="placeBet('10 Over Fancy - NOT', 1.85)">NOT<span>78</span></div>
-                        <div class="rate-box" onclick="placeBet('10 Over Fancy - YES', 1.85)">YES<span>82</span></div>
+                        <div class="rate-box" onclick="placeBet('10 Over Runs - NOT', 1.85)">NOT<span>78</span></div>
+                        <div class="rate-box" onclick="placeBet('10 Over Runs - YES', 1.85)">YES<span>82</span></div>
                     </div>
                 </div>
                 <div class="fancy-card">
@@ -311,13 +251,6 @@
                     <div class="fancy-rates">
                         <div class="rate-box" onclick="placeBet('1st Wicket - NOT', 1.85)">NOT<span>24</span></div>
                         <div class="rate-box" onclick="placeBet('1st Wicket - YES', 1.85)">YES<span>26</span></div>
-                    </div>
-                </div>
-                <div class="fancy-card">
-                    <div class="fancy-name">Highest Opening Partnership</div>
-                    <div class="fancy-rates">
-                        <div class="rate-box" onclick="placeBet('${team1} Partnership', 1.90)"><span>${team1}</span></div>
-                        <div class="rate-box" onclick="placeBet('${team2} Partnership', 1.90)"><span>${team2}</span></div>
                     </div>
                 </div>
             `;
@@ -328,26 +261,27 @@
             document.getElementById('matchesListView').style.display = 'block';
         }
 
-        async function placeBet(targetName, odds) {
-            let amount = prompt(`Enter bet amount for ${targetName} (Rate: ${odds}):`);
+        function placeBet(betName, odds) {
+            let amount = prompt(`Enter amount for ${betName} (Rate: ${odds}):`);
             if(!amount || isNaN(amount) || amount <= 0) return;
             amount = parseFloat(amount);
 
-            let userRef = db.collection("users").doc(currentUser);
-            let doc = await userRef.get();
-            let currentBal = doc.data().balance;
+            let users = JSON.parse(localStorage.getItem('king_users') || '[]');
+            let idx = users.findIndex(x => x.username === currentUser);
 
-            if(currentBal < amount) {
-                alert('Balance kam hai!');
-                return;
+            if(idx !== -1) {
+                if(users[idx].balance < amount) {
+                    alert('Balance kam hai!');
+                    return;
+                }
+                users[idx].balance -= amount;
+                localStorage.setItem('king_users', JSON.stringify(users));
+                updateClientBalanceDisplay();
+                alert(`Bet placed successfully for Rs. ${amount}!`);
             }
-
-            let newBal = currentBal - amount;
-            await userRef.update({ balance: newBal });
-            alert(`Bet placed successfully for Rs. ${amount}!`);
         }
 
-        async function createClientAccount() {
+        function createClientAccount() {
             let u = document.getElementById('newClientUser').value.trim();
             let p = document.getElementById('newClientPass').value.trim();
             let b = parseFloat(document.getElementById('newClientBal').value) || 0;
@@ -357,48 +291,53 @@
                 return;
             }
 
-            await db.collection("users").doc(u).set({
-                username: u,
-                password: p,
-                balance: b
-            });
+            let users = JSON.parse(localStorage.getItem('king_users') || '[]');
+            if(users.some(x => x.username === u)) {
+                alert('Yeh username pehle seमौजूद hai!');
+                return;
+            }
 
-            alert(`Client ${u} created successfully!`);
+            users.push({ username: u, password: p, balance: b });
+            localStorage.setItem('king_users', JSON.stringify(users));
+
+            alert(`Client ${u} successfully ban gaya hai!`);
             document.getElementById('newClientUser').value = '';
             document.getElementById('newClientPass').value = '';
             document.getElementById('newClientBal').value = '';
-            loadDealerClients();
+            loadClientsTable();
         }
 
-        async function loadDealerClients() {
+        function loadClientsTable() {
             let tbody = document.getElementById('dealerClientsList');
-            tbody.innerHTML = `<tr><td colspan="3">Loading...</td></tr>`;
-
-            let snapshot = await db.collection("users").get();
+            let users = JSON.parse(localStorage.getItem('king_users') || '[]');
             tbody.innerHTML = '';
-            
-            snapshot.forEach(doc => {
-                let data = doc.data();
+
+            if(users.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="4">Koi client mojood nahi hai.</td></tr>`;
+                return;
+            }
+
+            users.forEach((user, idx) => {
                 tbody.innerHTML += `
                     <tr>
-                        <td><b>${data.username}</b></td>
-                        <td style="color:#2ed573; font-weight:bold;">Rs. ${data.balance}</td>
+                        <td><b>${user.username}</b></td>
+                        <td>${user.password}</td>
+                        <td style="color:#2ed573; font-weight:bold;">Rs. ${user.balance}</td>
                         <td>
-                            <button onclick="modifyBalance('${data.username}', 1000)" style="background:#2ed573; border:none; padding:4px 8px; cursor:pointer; font-weight:bold; border-radius:3px;">+1000</button>
-                            <button onclick="modifyBalance('${data.username}', -1000)" style="background:#ff4757; color:white; border:none; padding:4px 8px; cursor:pointer; font-weight:bold; border-radius:3px; margin-left:4px;">-1000</button>
+                            <button onclick="changeBal(${idx}, 1000)" style="background:#2ed573; border:none; padding:4px 8px; cursor:pointer; font-weight:bold; border-radius:3px;">+1000</button>
+                            <button onclick="changeBal(${idx}, -1000)" style="background:#ff4757; color:white; border:none; padding:4px 8px; cursor:pointer; font-weight:bold; border-radius:3px; margin-left:4px;">-1000</button>
                         </td>
                     </tr>
                 `;
             });
         }
 
-        async function modifyBalance(username, amount) {
-            let ref = db.collection("users").doc(username);
-            let doc = await ref.get();
-            if(doc.exists) {
-                let newBal = doc.data().balance + amount;
-                await ref.update({ balance: newBal });
-                loadDealerClients();
+        function changeBal(idx, amount) {
+            let users = JSON.parse(localStorage.getItem('king_users') || '[]');
+            if(users[idx]) {
+                users[idx].balance += amount;
+                localStorage.setItem('king_users', JSON.stringify(users));
+                loadClientsTable();
             }
         }
     </script>
